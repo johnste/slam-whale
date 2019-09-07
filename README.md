@@ -1,1 +1,1 @@
-# not-acceptable
+# 406 Not Acceptable
