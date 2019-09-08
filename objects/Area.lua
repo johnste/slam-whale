@@ -6,8 +6,12 @@ function Area:new(room)
 end
 
 function Area:update(dt)
-    for _, entity in ipairs(self.entities) do
+    for index, entity in ipairs(self.entities) do
         entity:update(dt)
+
+        if (entity.dead) then
+            table.remove(self.entities, index)
+        end
     end
 end
 

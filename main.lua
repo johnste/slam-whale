@@ -1,6 +1,24 @@
 Object = require "libraries/classic/classic"
+Input = require "libraries/boipushy/Input"
+Camera = require "libraries/stalkerx/Camera"
+
+pushing = "false"
 
 love.load = function()
+    input = Input()
+    input:bind("d", "go right")
+    input:bind("a", "go left")
+    input:bind("w", "go up")
+    input:bind("s", "go down")
+
+    camera = Camera()
+    input:bind(
+        "h",
+        function()
+            camera:shake(40, 1, 60)
+        end
+    )
+
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.graphics.setLineStyle("rough")
     local object_files = {}
@@ -21,6 +39,8 @@ love.update = function(dt)
     if CurrentRoom then
         CurrentRoom:update(dt)
     end
+
+    camera:update(dt)
 end
 
 love.draw = function()
