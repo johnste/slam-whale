@@ -1,6 +1,6 @@
-local Entity = Object:extend()
+Entity = Object:extend()
 
-function Entity:new(area, x, y)
+function Entity:new(rea, x, y)
     self.area = area
     self.x = x
     self.y = y
@@ -12,5 +12,3 @@ end
 
 function Entity:draw()
 end
-
-return Entity

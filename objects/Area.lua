@@ -1,4 +1,4 @@
-local Area = Object:extend()
+Area = Object:extend()
 
 function Area:new(room)
     self.room = room
@@ -17,4 +17,6 @@ function Area:draw()
     end
 end
 
-return Area
+function Area:addEntity(entity)
+    table.insert(self.entities, entity)
+end
