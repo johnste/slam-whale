@@ -1,6 +1,8 @@
+require "utils"
 Object = require "libraries/classic/classic"
 Input = require "libraries/boipushy/Input"
 Camera = require "libraries/stalkerx/Camera"
+Timer = require "libraries/enhanced_timer/EnhancedTimer"
 
 pushing = "false"
 
@@ -12,10 +14,31 @@ love.load = function()
     input:bind("s", "go down")
 
     camera = Camera()
+    camera:setFollowLerp(0.1)
+    camera:setFollowLead(5)
+    camera:setFollowStyle("PLATFORMER")
     input:bind(
         "h",
         function()
             camera:shake(40, 1, 60)
+        end
+    )
+
+    input:bind(
+        "tab",
+        function()
+            if DebugMode then
+                DebugMode = false
+            else
+                DebugMode = true
+            end
+        end
+    )
+
+    input:bind(
+        "q",
+        function()
+            love.event.quit()
         end
     )
 
@@ -31,7 +54,7 @@ love.load = function()
 
     CurrentRoom = Stage()
 
-    resize(3)
+    resize(2)
 end
 
 love.update = function(dt)
@@ -47,6 +70,7 @@ love.draw = function()
     if CurrentRoom then
         CurrentRoom:draw()
     end
+    camera:draw()
 end
 
 function recursiveEnumerate(folder, file_list)

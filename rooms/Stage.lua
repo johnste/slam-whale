@@ -1,9 +1,18 @@
 Stage = Object:extend()
+wf = require "libraries/windfield"
 
 function Stage:new()
     self.area = Area(self)
+    love.physics.setMeter(10)
+    self.area:addPhysicsWorld(0, 0)
 
-    self.area:addEntity(Submarine(200, 100))
+    self.player = self.area:addEntity(Submarine(self.area, 200, 100))
+    input:bind(
+        "f3",
+        function()
+            self.player.dead = true
+        end
+    )
 
     self.main_canvas = love.graphics.newCanvas(gw, gh)
 end
