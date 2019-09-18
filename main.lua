@@ -4,7 +4,7 @@ Input = require "libraries/boipushy/Input"
 Camera = require "libraries/stalkerx/Camera"
 Timer = require "libraries/enhanced_timer/EnhancedTimer"
 Vector = require "libraries/hump/vector-light"
-print(Vector.dot)
+
 pushing = "false"
 
 love.load = function()
@@ -13,18 +13,19 @@ love.load = function()
     input:bind("a", "go left")
     input:bind("w", "go up")
     input:bind("s", "go down")
+    input:bind("space", "turbo")
 
     camera = Camera()
-    camera:setFollowLerp(0.1)
-    camera:setFollowLead(5)
-    camera:setFollowStyle("PLATFORMER")
+
+    camera:setFollowStyle("LOCKON")
     input:bind(
         "h",
         function()
-            camera:shake(40, 1, 60)
+            camera:shake(4, 0.5, 60)
         end
     )
 
+    DebugMode = true
     input:bind(
         "tab",
         function()
@@ -43,6 +44,13 @@ love.load = function()
         end
     )
 
+    input:bind(
+        "r",
+        function()
+            CurrentRoom = Stage()
+        end
+    )
+
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.graphics.setLineStyle("rough")
     local object_files = {}
@@ -53,9 +61,9 @@ love.load = function()
     recursiveEnumerate("rooms", room_files)
     requireFiles(room_files)
 
-    CurrentRoom = Stage()
+    CurrentRoom = Menu()
 
-    resize(2)
+    resize(1)
 end
 
 love.update = function(dt)

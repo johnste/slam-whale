@@ -12,5 +12,4 @@ function Water:update(dt)
 end
 
 function Water:draw()
-    love.graphics.rectangle("line", -1000, 0, 10000, 10000)
 end

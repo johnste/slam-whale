@@ -6,6 +6,7 @@ function Entity:new(area, x, y)
     self.y = y
     self.dead = false
     self.timer = Timer()
+    self.alive = true
 end
 
 function Entity:update(dt)

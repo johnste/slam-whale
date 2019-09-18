@@ -26,14 +26,14 @@ function Area:update(dt)
 end
 
 function Area:draw()
+    for _, entity in ipairs(self.entities) do
+        entity:draw()
+    end
+
     if DebugMode then
         if self.world then
             self.world:draw()
         end
-    end
-
-    for _, entity in ipairs(self.entities) do
-        entity:draw()
     end
 end
 
