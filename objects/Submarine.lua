@@ -19,13 +19,15 @@ function Submarine:new(area, x, y)
     sub_wings = love.graphics.newImage("img/sub-wings.png")
     sub_tower = love.graphics.newImage("img/sub-tower.png")
 
-    self.timer:every(
+    self.timer:after(
         0.4,
-        function()
+        function(f)
             xv = self.collider:getLinearVelocity()
             self.area:addEntity(
                 Bubble(self.area, self.x - math.cos(self.r) * self.w, self.y - math.sin(self.r) * self.w, xv)
             )
+            print(self.direction)
+            self.timer:after(math.max(0.1, self.direction), f)
         end
     )
 end
@@ -48,6 +50,9 @@ function Submarine:update(dt)
     if self.v >= self.max_v then
         self.v = self.max_v
     end
+
+    local x, y = Vector.normalize(self.collider:getLinearVelocity())
+    self.direction = Vector.dot(x, y, math.cos(self.r), math.sin(self.r))
 
     --self.collider:setLinearVelocity(self.v * math.cos(self.r), self.v * math.sin(self.r))
     self.collider:applyForce(self.v * math.cos(self.r), self.v * math.sin(self.r))

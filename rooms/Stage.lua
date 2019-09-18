@@ -7,6 +7,7 @@ function Stage:new()
     self.area:addPhysicsWorld(0, 0)
 
     self.player = self.area:addEntity(Submarine(self.area, 200, 100))
+    self.area:addEntity(Water(self.area, 200, 100))
     input:bind(
         "f3",
         function()

@@ -32,8 +32,6 @@ function Area:draw()
         end
     end
 
-    print(#self.entities)
-
     for _, entity in ipairs(self.entities) do
         entity:draw()
     end

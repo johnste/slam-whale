@@ -17,6 +17,10 @@ function Bubble:update(dt)
     self.vx = self.vx * 0.6
     self.y = self.y - self.vy
     self.x = self.x + self.vx * dt
+
+    if (self.y <= 0) then
+        self.dead = true
+    end
 end
 
 function Bubble:draw()

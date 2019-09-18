@@ -3,7 +3,8 @@ Object = require "libraries/classic/classic"
 Input = require "libraries/boipushy/Input"
 Camera = require "libraries/stalkerx/Camera"
 Timer = require "libraries/enhanced_timer/EnhancedTimer"
-
+Vector = require "libraries/hump/vector-light"
+print(Vector.dot)
 pushing = "false"
 
 love.load = function()
