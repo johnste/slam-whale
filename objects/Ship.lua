@@ -98,7 +98,7 @@ function Ship:draw()
     --     print(k, v)
     -- end
     if not self.alive then
-        love.graphics.setColor(1, 1, 1, 0.5)
+        love.graphics.setColor(0.1, 0.1, 0.1, 1)
     end
 
     love.graphics.draw(

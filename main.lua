@@ -48,13 +48,6 @@ love.load = function()
         end
     )
 
-    input:bind(
-        "r",
-        function()
-            CurrentRoom = Stage()
-        end
-    )
-
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.graphics.setLineStyle("rough")
     local object_files = {}
