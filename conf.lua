@@ -8,7 +8,7 @@ function love.conf(t)
     t.version = "11.2" -- The LÖVE version this game was made for (string)
     t.console = true -- Attach a console (boolean, Windows only)
 
-    t.window.title = "IMPACT SUB" -- The window title (string)
+    t.window.title = "SLAM WHALE" -- The window title (string)
     t.window.icon = nil -- Filepath to an image to use as the window's icon (string)
     t.window.width = gw -- The window width (number)
     t.window.height = gh -- The window height (number)

@@ -25,6 +25,9 @@ function Ship:new(area, x, y)
 
     sub_body = love.graphics.newImage("img/ship.png")
 
+    self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
+    self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
+
     self.timer:after(
         0.4,
         function(f)
@@ -51,6 +54,7 @@ function Ship:update(dt)
 
     --self.collider:setLinearVelocity(self.v * math.cos(self.r), self.v * math.sin(self.r))
     --self.collider:applyForce(self.v * math.cos(self.r), self.v * math.sin(self.r))
+    self.r = self.collider:getAngle()
 
     if (self.y > 1000) then
         self.dead = true
@@ -60,10 +64,11 @@ function Ship:update(dt)
         return
     end
 
-    if (self.y > 15) then
+    if (self.y > 35) then
         self.alive = false
         self.collider:setLinearDamping(0.14)
         self.collider:applyAngularImpulse(5000)
+        self.explosion_underwater:play()
     end
 
     if (self.y < 0) then
@@ -78,13 +83,12 @@ function Ship:update(dt)
         self.collider:applyTorque(-1000000 * dt)
     end
 
-    self.r = self.collider:getAngle()
-
     self.collider:applyForce(-40 * math.cos(self.r), -40 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         self.collider:applyLinearImpulse(0, 100)
         camera:shake(8, 0.7, 30)
+        self.explosion:play()
     --self.collider:applyAngularImpulse(5000)
     end
 end

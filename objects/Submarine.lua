@@ -64,6 +64,10 @@ function Submarine:update(dt)
         end
     end
 
+    if input:pressed("turbo") then
+        self.slam:play()
+    end
+
     if input:down("go down") then
         self.collider:applyForce(-self.reversev * math.cos(self.r), -self.reversev * math.sin(self.r))
     end
@@ -75,6 +79,10 @@ function Submarine:update(dt)
     local x, y = Vector.normalize(self.collider:getLinearVelocity())
     self.direction = Vector.dot(x, y, math.cos(self.r), math.sin(self.r))
 
+    self.jump = love.audio.newSource("sfx/jump.wav", "static")
+    self.slam = love.audio.newSource("sfx/slam.wav", "static")
+    self.splash = love.audio.newSource("sfx/splash.wav", "static")
+
     --self.collider:setLinearVelocity(self.v * math.cos(self.r), self.v * math.sin(self.r))
 
     if (self.lasty < 0 and self.y >= 0) then
@@ -85,6 +93,12 @@ function Submarine:update(dt)
         local splash = math.abs(Vector.dot(math.cos(angle), math.sin(angle), 0, 1))
 
         self.collider:setLinearVelocity(vx, vy * splash)
+
+        self.splash:play()
+    end
+
+    if (self.lasty > 0 and self.y <= 0) then
+        self.jump:play()
     end
 
     self.lasty = self.y
@@ -96,7 +110,15 @@ function Submarine:update(dt)
     end
 
     if (self.y > 1000) then
-        self.collider:applyForce(0, -10000 * dt)
+        self.collider:applyForce(0, -30000 * dt)
+    end
+
+    if (self.x > 2000) then
+        self.collider:applyForce(-30000 * dt, 0)
+    end
+
+    if (self.x < -2000) then
+        self.collider:applyForce(30000 * dt, 0)
     end
 end
 

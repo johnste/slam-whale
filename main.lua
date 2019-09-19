@@ -13,17 +13,21 @@ love.load = function()
     input:bind("a", "go left")
     input:bind("w", "go up")
     input:bind("s", "go down")
+    input:bind("right", "go right")
+    input:bind("left", "go left")
+    input:bind("up", "go up")
+    input:bind("down", "go down")
     input:bind("space", "turbo")
 
     camera = Camera()
 
     camera:setFollowStyle("LOCKON")
-    input:bind(
-        "h",
-        function()
-            camera:shake(4, 0.5, 60)
-        end
-    )
+    -- input:bind(
+    --     "h",
+    --     function()
+    --         camera:shake(4, 0.5, 60)
+    --     end
+    -- )
 
     DebugMode = false
     input:bind(
@@ -61,7 +65,12 @@ love.load = function()
     recursiveEnumerate("rooms", room_files)
     requireFiles(room_files)
 
-    CurrentRoom = Menu()
+    CurrentRoom =
+        Menu(
+        function()
+            CurrentRoom = Stage()
+        end
+    )
 
     resize(1)
 end
