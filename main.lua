@@ -25,7 +25,7 @@ love.load = function()
         end
     )
 
-    DebugMode = true
+    DebugMode = false
     input:bind(
         "tab",
         function()
