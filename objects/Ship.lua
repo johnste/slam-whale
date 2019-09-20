@@ -16,8 +16,9 @@ function Ship:new(area, x, y)
     body:setMass(8)
     body:setAngularDamping(1)
     body:setLinearDamping(0.04)
+    body:setLinearVelocity(-50, 0)
 
-    local cabin = self.area.world:newRectangleCollider(self.x + self.w / 2 - 28 - 8, self.y - 22 - 10, 28, 20)
+    local cabin = self.area.world:newRectangleCollider(self.x + self.w / 2 - 28 - 8, self.y - 22 - 20, 28, 30)
 
     self.area.world:addJoint("WeldJoint", body, cabin, self.x + self.w / 2, self.y - 12)
 
@@ -27,6 +28,19 @@ function Ship:new(area, x, y)
 
     self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
+
+    local rows = math.floor(love.math.random() * 3) + 1
+    local cols = math.floor(love.math.random() * 3) + 2
+
+    for i = 1, rows do
+        for j = 1, cols do
+            if (love.math.random() < 0.4) then
+                self.area:addEntity(Box(self.area, self.x + 25 - j * 20, self.y - i * 20))
+            else
+                self.area:addEntity(Lovebox(self.area, self.x + 25 - j * 20, self.y - i * 20))
+            end
+        end
+    end
 
     self.timer:after(
         0.4,
@@ -64,7 +78,7 @@ function Ship:update(dt)
         return
     end
 
-    if (self.y > 35) then
+    if (self.y > 40) then
         self.alive = false
         self.collider:setLinearDamping(0.14)
         self.collider:applyAngularImpulse(5000)
@@ -83,10 +97,10 @@ function Ship:update(dt)
         self.collider:applyTorque(-1000000 * dt)
     end
 
-    self.collider:applyForce(-40 * math.cos(self.r), -40 * math.sin(self.r))
+    self.collider:applyForce(-40 * math.cos(self.r), -20 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
-        self.collider:applyLinearImpulse(0, 100)
+        --self.collider:applyLinearImpulse(0, 100)
         camera:shake(8, 0.7, 30)
         self.explosion:play()
     --self.collider:applyAngularImpulse(5000)
@@ -98,7 +112,7 @@ function Ship:draw()
     --     print(k, v)
     -- end
     if not self.alive then
-        love.graphics.setColor(0.1, 0.1, 0.1, 1)
+        love.graphics.setColor(1, 1, 1, 1)
     end
 
     love.graphics.draw(

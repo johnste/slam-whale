@@ -4,6 +4,7 @@ Input = require "libraries/boipushy/Input"
 Camera = require "libraries/stalkerx/Camera"
 Timer = require "libraries/enhanced_timer/EnhancedTimer"
 Vector = require "libraries/hump/vector-light"
+moonshine = require "libraries/moonshine"
 
 pushing = "false"
 
@@ -18,9 +19,10 @@ love.load = function()
     input:bind("up", "go up")
     input:bind("down", "go down")
     input:bind("space", "turbo")
+    input:bind("return", "turbo")
 
     camera = Camera()
-
+    love.audio.setVolume(0.2)
     camera:setFollowStyle("LOCKON")
     -- input:bind(
     --     "h",

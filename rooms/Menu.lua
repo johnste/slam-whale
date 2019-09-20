@@ -62,6 +62,14 @@ function Menu:update(dt)
         self.select:play()
     end
 
+    if input:pressed("go right") then
+        love.audio.setVolume(math.min(1, love.audio.getVolume() + 0.1))
+    end
+
+    if input:pressed("go left") then
+        love.audio.setVolume(math.max(0, love.audio.getVolume() - 0.1))
+    end
+
     if input:pressed("turbo") then
         self.start:play()
         if (self.active == 1) then
@@ -85,6 +93,14 @@ function Menu:draw()
 
     love.graphics.draw(menu, gw / 2, 500, 0, 1, 1, menu:getWidth() / 2)
 
+    love.graphics.printf(
+        "Save the fish before they reach the port",
+        gw / 2 - logo:getWidth() / 2,
+        100 + logo:getHeight(),
+        logo:getWidth(),
+        "center"
+    )
+
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.circle("fill", gw / 2 + 20 - menu:getWidth() / 2, 500 + 35 + (self.active - 1) * 65, 30)
     love.graphics.setColor(1, 1, 1, 1)
@@ -98,7 +114,13 @@ function Menu:draw()
         menu:getWidth() / 2
     )
 
-    love.graphics.printf("A game for spelsylt #3", gw / 2 - 150, gh - 60, 300, "center")
+    love.graphics.printf(
+        "A game for spelsylt #3. Change volume (A/D): " .. math.ceil((love.audio.getVolume()) * 10) .. " / 10",
+        gw / 2 - 150,
+        gh - 60,
+        400,
+        "center"
+    )
 
     self.area:draw()
     camera:detach()
