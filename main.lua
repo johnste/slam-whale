@@ -44,12 +44,12 @@ love.load = function()
         end
     )
 
-    input:bind(
-        "q",
-        function()
-            love.event.quit()
-        end
-    )
+    -- input:bind(
+    --     "q",
+    --     function()
+    --         love.event.quit()
+    --     end
+    -- )
 
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.graphics.setLineStyle("rough")

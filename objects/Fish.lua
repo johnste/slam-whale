@@ -32,7 +32,7 @@ function Fish:update(dt)
     self.vy = self.vy + (love.math.random() - 0.5) / 20
     self.x = self.x - self.vx
 
-    if (self.y <= 0) then
+    if (self.y <= 100) then
         self.vy = math.max(math.abs(self.vy) * 1.12, math.random() * 10 + 10)
     else
         self.vy = math.abs(self.vy) / 1.22

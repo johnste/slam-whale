@@ -120,9 +120,9 @@ function Menu:draw()
 
     love.graphics.printf(
         "A game for spelsylt #3. Change volume (A/D): " .. math.ceil((love.audio.getVolume()) * 10) .. " / 10",
-        gw / 2 - 150,
+        gw / 2 - logo:getWidth() / 2,
         gh - 60,
-        400,
+        logo:getWidth(),
         "center"
     )
 

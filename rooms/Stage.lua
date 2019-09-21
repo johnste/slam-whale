@@ -18,11 +18,14 @@ function Stage:new()
 
     self.area:addEntity(Tanker(self.area, 1300, 0))
 
+    self.area:addEntity(Plane(self.area, 1700, 0))
+
     self.area:addEntity(Water(self.area, 200, 100))
 
     self.player = self.area:addEntity(Ship(self.area, 1800, 0))
     self.main_canvas = love.graphics.newCanvas(gw, gh)
     self.timer = Timer()
+    LEVEL = 15
     self.timer:after(
         16,
         function(f)
@@ -31,19 +34,23 @@ function Stage:new()
             elseif love.math.random() < 0.3 then
                 self.area:addEntity(Boat(self.area, 2700, 0, 1))
             end
-            self.timer:after(12, f)
-        end
-    )
 
-    self.timer:after(
-        30,
-        function(f)
-            if love.math.random() < 0.5 then
-                self.player = self.area:addEntity(Tanker(self.area, 2700, 0))
-            elseif love.math.random() < 0.3 then
-                self.area:addEntity(Plane(self.area, 2700, 0, 1))
-            end
-            self.timer:after(12, f)
+            self.timer:after(
+                30,
+                function(f)
+                    LEVEL = LEVEL * 0.8
+                    if love.math.random() < 0.5 then
+                        self.player = self.area:addEntity(Ship(self.area, 2700, 0))
+                    elseif love.math.random() < 0.3 then
+                        self.area:addEntity(Boat(self.area, 2700, 0, 1))
+                    elseif love.math.random() < 0.5 then
+                        self.player = self.area:addEntity(Tanker(self.area, 2700, 0))
+                    elseif love.math.random() < 0.5 then
+                        self.area:addEntity(Plane(self.area, 2700, 0, 1))
+                    end
+                    self.timer:after(math.max(5, LEVEL), f)
+                end
+            )
         end
     )
 
@@ -63,6 +70,11 @@ function Stage:new()
             end
         end
     )
+
+    self.song = love.audio.newSource("sfx/traska.wav", "stream")
+    self.song:setLooping(true)
+
+    self.song:play()
 end
 
 function Stage:update(dt)
@@ -71,6 +83,7 @@ function Stage:update(dt)
             camera:follow(self.gameOverX, self.gameOverY)
 
             if input:pressed("turbo") then
+                self.song:stop()
                 CurrentRoom = Menu()
             end
         end
@@ -118,6 +131,7 @@ function Stage:draw()
         points[i * 2 - 1] = 500 * 100 - i * 100
         points[i * 2] = y
     end
+    self.area:draw()
 
     love.graphics.line(points)
 
@@ -135,8 +149,6 @@ function Stage:draw()
 
     love.graphics.draw(port, -2400, -200)
     love.graphics.rectangle("fill", -3000, -83, 900, 2000)
-
-    self.area:draw()
 
     camera:detach()
 

@@ -67,7 +67,7 @@ function Lovebox:update(dt)
                     self.area:addEntity(Fish(self.area, self.x, self.y + love.math.random() * 5))
                     self.explosion_underwater:play()
 
-                    local colliders = self.area.world:queryCircleArea(self.x, self.y, 100)
+                    local colliders = self.area.world:queryCircleArea(self.x, self.y, 140)
                     for _, collider in ipairs(colliders) do
                         local posx, posy = collider:getWorldCenter()
                         local vecx, vecy = Vector.normalize(posx - self.x, posy - self.y)
