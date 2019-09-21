@@ -21,4 +21,7 @@ function Entity:draw()
 end
 
 function Entity:destroy()
+    if self.collider then
+        self.collider:destroy()
+    end
 end

@@ -1,7 +1,7 @@
 Menu = Object:extend()
 wf = require "libraries/windfield"
 
-function Menu:new(callback)
+function Menu:new()
     self.area = Area(self)
     love.physics.setMeter(10)
     self.area:addPhysicsWorld(0, 0)
@@ -13,7 +13,6 @@ function Menu:new(callback)
     chevron = love.graphics.newImage("img/chevron.png")
     help = love.graphics.newImage("img/help.png")
 
-    self.callback = callback
     self.active = 1
     self.timer = Timer()
     self.pos = {x = 0}
@@ -43,6 +42,7 @@ function Menu:new(callback)
 end
 
 function Menu:update(dt)
+    camera:follow(gw / 2, gh / 2)
     self.area:update(dt)
     self.timer:update(dt)
 
@@ -73,7 +73,8 @@ function Menu:update(dt)
     if input:pressed("turbo") then
         self.start:play()
         if (self.active == 1) then
-            self.callback()
+            self.song:stop()
+            CurrentRoom = Stage()
         end
         if (self.active == 2) then
             love.event.quit()

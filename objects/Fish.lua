@@ -31,6 +31,13 @@ function Fish:update(dt)
     self.vx = self.vx + dt * self.direction
     self.vy = self.vy + (love.math.random() - 0.5) / 20
     self.x = self.x - self.vx
+
+    if (self.y <= 0) then
+        self.vy = math.abs(self.vy) * 1.12
+    else
+        self.vy = math.abs(self.vy) / 1.22
+    end
+
     self.y = self.y + self.vy * dt
 
     if (self.x < -3000) or (self.x > 3000) then

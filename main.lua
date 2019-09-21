@@ -20,9 +20,10 @@ love.load = function()
     input:bind("down", "go down")
     input:bind("space", "turbo")
     input:bind("return", "turbo")
+    input:bind("escape", "pause")
 
     camera = Camera()
-    love.audio.setVolume(0.2)
+    love.audio.setVolume(0.5)
     camera:setFollowStyle("LOCKON")
     -- input:bind(
     --     "h",
@@ -60,12 +61,7 @@ love.load = function()
     recursiveEnumerate("rooms", room_files)
     requireFiles(room_files)
 
-    CurrentRoom =
-        Menu(
-        function()
-            CurrentRoom = Stage()
-        end
-    )
+    CurrentRoom = Menu()
 
     resize(1)
 end
