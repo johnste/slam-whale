@@ -36,7 +36,7 @@ function Menu:new()
 
     self.select = love.audio.newSource("sfx/select.wav", "static")
     self.start = love.audio.newSource("sfx/start.wav", "static")
-    self.song = love.audio.newSource("sfx/darkwater.wav", "stream")
+    self.song = love.audio.newSource("sfx/darkwater.ogg", "stream")
     self.song:setLooping(true)
 
     self.song:play()

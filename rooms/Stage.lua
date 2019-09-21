@@ -71,7 +71,7 @@ function Stage:new()
         end
     )
 
-    self.song = love.audio.newSource("sfx/traska.wav", "stream")
+    self.song = love.audio.newSource("sfx/traska.ogg", "stream")
     self.song:setLooping(true)
 
     self.song:play()

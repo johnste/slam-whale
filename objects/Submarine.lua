@@ -52,11 +52,25 @@ function Submarine:update(dt)
     if input:down("go right") then
         --self.r = self.r + self.rv * dt
         self.collider:applyTorque(15000 * dt)
+
+        local _, vy = self.collider:getLinearVelocity()
+        if self.y < 0 and math.abs(math.sin(self.r)) > 0.9 and math.abs(vy) < 5 then
+            print("ok" .. math.abs(vy))
+            self.collider:applyTorque(25000 * dt)
+            self.collider:applyForce(200, 0)
+        end
     end
 
     if input:down("go left") then
         --self.r = self.r - self.rv * dt
         self.collider:applyTorque(-15000 * dt)
+
+        local _, vy = self.collider:getLinearVelocity()
+        if self.y < 0 and math.abs(math.sin(self.r)) > 0.9 and math.abs(vy) < 5 then
+            print("ok" .. math.abs(vy))
+            self.collider:applyTorque(-25000 * dt)
+            self.collider:applyForce(-200, 0)
+        end
     end
 
     if input:down("turbo") then
