@@ -12,6 +12,7 @@ function Menu:new()
     menu = love.graphics.newImage("img/menu.png")
     chevron = love.graphics.newImage("img/chevron.png")
     help = love.graphics.newImage("img/help.png")
+    boximg = love.graphics.newImage("img/lovebox.png")
 
     self.active = 1
     self.timer = Timer()
@@ -94,8 +95,10 @@ function Menu:draw()
 
     love.graphics.draw(menu, gw / 2, 500, 0, 1, 1, menu:getWidth() / 2)
 
+    love.graphics.draw(boximg, gw / 2 + 3, gw / 2 - logo:getWidth() / 2 + self.pos.x / 3 + 52, 0, 1, 1)
+
     love.graphics.printf(
-        "Save the fish before they reach the port",
+        "Push the fish boxes into water      before they reach the port",
         gw / 2 - logo:getWidth() / 2,
         100 + logo:getHeight(),
         logo:getWidth(),

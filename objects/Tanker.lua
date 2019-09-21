@@ -1,40 +1,40 @@
-Boat = Entity:extend()
+Tanker = Entity:extend()
 local sub_body
 
-function Boat:new(area, x, y, colrows)
-    Boat.super.new(self, area, x, y)
+function Tanker:new(area, x, y, colrows)
+    Tanker.super.new(self, area, x, y)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0
     self.max_v = 100
     self.a = 100
-    self.w = 64
+    self.w = 256
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
-    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 12)
+    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 25, self.w, 50)
+
     body:setObject(self)
-    body:setMass(0.3)
+    body:setMass(80)
     body:setAngularDamping(1)
     body:setLinearDamping(0.04)
     body:setLinearVelocity(-25, 0)
-    body:setFriction(1)
 
     self.collider = body
 
-    sub_body = love.graphics.newImage("img/boat.png")
+    sub_body = love.graphics.newImage("img/tanker.png")
 
     self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
 
-    local rows = 1
-    local cols = colrows or math.floor(love.math.random() * 2) + 1
+    local rows = colrows or math.floor(love.math.random() * 4) + 3
+    local cols = colrows or math.floor(love.math.random() * 4) + 2
 
     for i = 1, rows do
         for j = 1, cols do
             if (colrows or love.math.random() > 0.4) then
-                self.area:addEntity(Lovebox(self.area, self.x - j * 16, self.y - i * 16 + 4))
+                self.area:addEntity(Lovebox(self.area, self.x + 25 - j * 16, self.y - i * 16))
             else
-                self.area:addEntity(Box(self.area, self.x - j * 16, self.y - i * 16 + 4))
+                self.area:addEntity(Box(self.area, self.x + 25 - j * 16, self.y - i * 16))
             end
         end
     end
@@ -44,7 +44,7 @@ function Boat:new(area, x, y, colrows)
         function(f)
             xv, yv = self.collider:getLinearVelocity()
 
-            if (love.math.random() > 0.3 and self.alive == false and self.y > 0) then
+            if (love.math.random() > 0.3 and self.alive == false) then
                 xv, yv = self.collider:getLinearVelocity()
 
                 if (love.math.random() > 0.5) then
@@ -60,15 +60,12 @@ function Boat:new(area, x, y, colrows)
     )
 end
 
-function Boat:update(dt)
-    Boat.super.update(self, dt)
+function Tanker:update(dt)
+    Tanker.super.update(self, dt)
 
+    --self.collider:setLinearVelocity(self.v * math.cos(self.r), self.v * math.sin(self.r))
+    --self.collider:applyForce(self.v * math.cos(self.r), self.v * math.sin(self.r))
     self.r = self.collider:getAngle()
-
-    if (self.y < -50) then
-        self.alive = false
-        self.collider:applyForce(0, 3000 * dt)
-    end
 
     if (self.y > 1000) then
         self.dead = true
@@ -81,23 +78,23 @@ function Boat:update(dt)
     if (self.y > 40) then
         self.alive = false
         self.collider:setLinearDamping(0.14)
-        self.collider:applyAngularImpulse(500)
+        self.collider:applyAngularImpulse(5000)
         self.explosion_underwater:play()
     end
 
     if (self.y < 0) then
-        self.collider:applyForce(0, 3000 * dt)
+        self.collider:applyForce(0, 50000 * dt)
     elseif (self.y > 0) then
-        self.collider:applyForce(0, -1200 * dt)
+        self.collider:applyForce(0, -460000 * dt)
     end
 
-    if (self.collider:getAngle() < 0.1) then
-        self.collider:applyTorque(100000 * dt)
+    if (self.collider:getAngle() < 0) then
+        self.collider:applyTorque(10000000 * dt)
     else
-        self.collider:applyTorque(-100000 * dt)
+        self.collider:applyTorque(-10000000 * dt)
     end
 
-    self.collider:applyForce(-3 * math.cos(self.r), -20 * math.sin(self.r))
+    self.collider:applyForce(-160 * math.cos(self.r), -20 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         camera:shake(8, 0.7, 30)
@@ -105,7 +102,7 @@ function Boat:update(dt)
     end
 end
 
-function Boat:draw()
+function Tanker:draw()
     love.graphics.draw(
         sub_body,
         self.x,

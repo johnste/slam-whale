@@ -9,12 +9,14 @@ function Stage:new()
 
     self.player = self.area:addEntity(Submarine(self.area, -1800, 100))
 
-    self.area:addEntity(Boat(self.area, -1200, 0, 1))
+    self.area:addEntity(Boat(self.area, -1200, 0))
 
     self.area:addEntity(Ship(self.area, -700, 0, 2))
     self.area:addEntity(Boat(self.area, -100, 0, 2))
     self.area:addEntity(Ship(self.area, 200, 0))
     self.area:addEntity(Boat(self.area, 800, 0))
+
+    self.area:addEntity(Tanker(self.area, 1300, 0))
 
     self.area:addEntity(Water(self.area, 200, 100))
 
@@ -26,8 +28,20 @@ function Stage:new()
         function(f)
             if love.math.random() < 0.5 then
                 self.player = self.area:addEntity(Ship(self.area, 2700, 0))
-            else
-                self.area:addEntity(Boat(self.area, -1200, 0, 1))
+            elseif love.math.random() < 0.3 then
+                self.area:addEntity(Boat(self.area, 2700, 0, 1))
+            end
+            self.timer:after(12, f)
+        end
+    )
+
+    self.timer:after(
+        30,
+        function(f)
+            if love.math.random() < 0.5 then
+                self.player = self.area:addEntity(Tanker(self.area, 2700, 0))
+            elseif love.math.random() < 0.3 then
+                self.area:addEntity(Plane(self.area, 2700, 0, 1))
             end
             self.timer:after(12, f)
         end

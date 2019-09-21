@@ -12,10 +12,10 @@ function Box:new(area, x, y)
 
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - self.w / 2, self.w, self.w)
     body:setObject(self)
-    body:setMass(0.2)
+    body:setMass(0.1)
     body:setAngularDamping(1)
     body:setLinearDamping(0.4)
-    body:setFriction(1)
+    body:setFriction(0.36)
 
     self.collider = body
 

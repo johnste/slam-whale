@@ -1,17 +1,17 @@
-Boat = Entity:extend()
+Plane = Entity:extend()
 local sub_body
 
-function Boat:new(area, x, y, colrows)
-    Boat.super.new(self, area, x, y)
+function Plane:new(area, x, y, colrows)
+    Plane.super.new(self, area, x, y - 200)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0
     self.max_v = 100
     self.a = 100
-    self.w = 64
+    self.w = 40
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
-    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 12)
+    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 20)
     body:setObject(self)
     body:setMass(0.3)
     body:setAngularDamping(1)
@@ -21,23 +21,15 @@ function Boat:new(area, x, y, colrows)
 
     self.collider = body
 
-    sub_body = love.graphics.newImage("img/boat.png")
+    sub_body = love.graphics.newImage("img/biplane.png")
 
     self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
 
     local rows = 1
-    local cols = colrows or math.floor(love.math.random() * 2) + 1
+    local cols = 1
 
-    for i = 1, rows do
-        for j = 1, cols do
-            if (colrows or love.math.random() > 0.4) then
-                self.area:addEntity(Lovebox(self.area, self.x - j * 16, self.y - i * 16 + 4))
-            else
-                self.area:addEntity(Box(self.area, self.x - j * 16, self.y - i * 16 + 4))
-            end
-        end
-    end
+    self.area:addEntity(Lovebox(self.area, self.x - 1 * 16, self.y - 1 * 16 + 4))
 
     self.timer:after(
         0.4,
@@ -60,12 +52,12 @@ function Boat:new(area, x, y, colrows)
     )
 end
 
-function Boat:update(dt)
-    Boat.super.update(self, dt)
+function Plane:update(dt)
+    Plane.super.update(self, dt)
 
     self.r = self.collider:getAngle()
 
-    if (self.y < -50) then
+    if (self.y > 20) then
         self.alive = false
         self.collider:applyForce(0, 3000 * dt)
     end
@@ -85,9 +77,9 @@ function Boat:update(dt)
         self.explosion_underwater:play()
     end
 
-    if (self.y < 0) then
+    if (self.y < -200) then
         self.collider:applyForce(0, 3000 * dt)
-    elseif (self.y > 0) then
+    elseif (self.y > -200) then
         self.collider:applyForce(0, -1200 * dt)
     end
 
@@ -105,7 +97,7 @@ function Boat:update(dt)
     end
 end
 
-function Boat:draw()
+function Plane:draw()
     love.graphics.draw(
         sub_body,
         self.x,

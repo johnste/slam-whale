@@ -15,9 +15,10 @@ function Lovebox:new(area, x, y)
     body:setMass(0.1)
     body:setAngularDamping(1)
     body:setLinearDamping(0.4)
-    body:setFriction(1)
+    body:setFriction(0.4)
 
     self.collider = body
+    self.isLoveBox = true
 
     boximg = love.graphics.newImage("img/lovebox.png")
     boombox = love.graphics.newImage("img/boombox.png")
@@ -51,7 +52,7 @@ function Lovebox:update(dt)
     --self.collider:applyForce(self.v * math.cos(self.r), self.v * math.sin(self.r))
     self.r = self.collider:getAngle()
 
-    if (self.y > 50) then
+    if (self.y > 50 or not self.alive) then
         if not self.exploding then
             self.exploding = true
             self.timer:after(
@@ -70,7 +71,12 @@ function Lovebox:update(dt)
                     for _, collider in ipairs(colliders) do
                         local posx, posy = collider:getWorldCenter()
                         local vecx, vecy = Vector.normalize(posx - self.x, posy - self.y)
-                        collider:applyLinearImpulse(30 * vecx, 30 * vecy)
+                        collider:applyLinearImpulse(25 * vecx, 25 * vecy)
+
+                        local obj = collider:getObject()
+                        if (obj and obj.isLoveBox) then
+                            obj.alive = false
+                        end
                     end
 
                     self.timer:after(

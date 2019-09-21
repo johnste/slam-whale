@@ -14,11 +14,13 @@ function Submarine:new(area, x, y)
     self.lasty = 0
 
     -- self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
-    self.collider = self.area.world:newRectangleCollider(self.x - 16, self.y - 4, 32, 8)
-    self.collider:setObject(self)
-    self.collider:setAngularDamping(1)
-    self.collider:setLinearDamping(0.1)
-    self.collider:setCollisionClass("Sub")
+    local body = self.area.world:newRectangleCollider(self.x - 16, self.y - 4, 32, 8)
+    body:setObject(self)
+    body:setAngularDamping(1)
+    body:setLinearDamping(0.1)
+    body:setCollisionClass("Sub")
+
+    self.collider = body
 
     sub_body = love.graphics.newImage("img/sub-body.png")
     sub_wings = love.graphics.newImage("img/sub-wings.png")
@@ -64,6 +66,15 @@ function Submarine:update(dt)
         end
     end
 
+    if (self.y < 0) then
+        if input:down("go down") then
+            self.collider:applyForce(-self.reversev * 1 * math.cos(self.r), 0)
+        end
+        if input:down("go up") then
+            self.collider:applyForce(self.v * 1 * math.cos(self.r), 0)
+        end
+    end
+
     if input:pressed("turbo") then
         self.slam:play()
     end
@@ -95,6 +106,15 @@ function Submarine:update(dt)
         self.collider:setLinearVelocity(vx, vy * splash)
 
         self.splash:play()
+    end
+
+    -- slow down when facing
+    local vx, vy = self.collider:getLinearVelocity()
+    local angle = self.collider:getAngle()
+    local splash = 1 - math.abs(Vector.dot(math.cos(angle), math.sin(angle), Vector.normalize(vx, vy)))
+
+    if (splash > 0.5) then
+        self.collider:setLinearVelocity(vx * 0.98, vy * 0.98)
     end
 
     if (self.lasty > 0 and self.y <= 0) then
