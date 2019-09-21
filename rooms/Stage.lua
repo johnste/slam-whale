@@ -48,7 +48,7 @@ function Stage:new()
                     elseif love.math.random() < 0.5 then
                         self.area:addEntity(Plane(self.area, 2700, 0, 1))
                     end
-                    self.timer:after(math.max(5, LEVEL), f)
+                    self.timer:after(math.max(7, LEVEL), f)
                 end
             )
         end
