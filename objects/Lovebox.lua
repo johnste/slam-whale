@@ -105,7 +105,8 @@ function Lovebox:update(dt)
         self.alive = false
         camera:shake(10, 1, 42)
 
-        self.area.room:setGameOver(self.x, self.y)
+        -- self.area.room:setGameOver(self.x, self.y)
+        print("You're dead")
     end
 
     -- if self.collider:enter("Sub") then

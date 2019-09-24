@@ -3,7 +3,7 @@ local sub_body
 local sub_wings
 local sub_tower
 
-function Submarine:new(area, x, y)
+function Submarine:new(area, x, y, water)
     Submarine.super.new(self, area, x, y)
     self.r = 0
     self.rv = 1.22 * math.pi
@@ -12,6 +12,7 @@ function Submarine:new(area, x, y)
     self.a = 200
     self.w = 12
     self.lasty = 0
+    self.water = water
 
     -- self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     local body = self.area.world:newRectangleCollider(self.x - 16, self.y - 4, 32, 8)
@@ -45,8 +46,9 @@ end
 
 function Submarine:update(dt)
     Submarine.super.update(self, dt)
+    -- local xz, vz = self.collider:getLinearVelocity()
+    -- camera:follow(self.x + xz / 2 * math.abs(math.cos(self.r)), self.y + vz / 2 * math.abs(math.sin(self.r)))
     camera:follow(self.x, self.y)
-
     self.r = self.collider:getAngle()
 
     if input:down("go right") then
@@ -120,6 +122,8 @@ function Submarine:update(dt)
         self.collider:setLinearVelocity(vx, vy * splash)
 
         self.splash:play()
+
+        self.water:splash(self.x, vy / 10 + math.abs(vx) / 50)
     end
 
     -- slow down when facing
@@ -181,6 +185,14 @@ function Submarine:draw()
         math.cos(self.r),
         sub_tower:getWidth() / 2,
         sub_tower:getHeight() / 2
+    )
+
+    local xz, vz = self.collider:getLinearVelocity()
+    love.graphics.circle(
+        "fill",
+        self.x + xz / 2 * math.abs(math.cos(self.r)),
+        self.y + vz / 2 * math.abs(math.sin(self.r)),
+        5
     )
 
     --love.graphics.circle("line", self.x, self.y, self.w)
