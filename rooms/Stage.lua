@@ -21,8 +21,6 @@ function Stage:new()
 
     -- self.area:addEntity(Tanker(self.area, 1300, 0))
 
-    self.area:addEntity(Water(self.area, 200, 100))
-
     self.player = self.area:addEntity(Ship(self.area, 1800, 0))
     self.main_canvas = love.graphics.newCanvas(gw, gh)
     self.timer = Timer()

@@ -14,7 +14,7 @@ function Menu:new()
     help = love.graphics.newImage("img/help.png")
     boximg = love.graphics.newImage("img/lovebox.png")
 
-    self.active = 1
+    self.active = 3
     self.timer = Timer()
     self.pos = {x = 0}
 
@@ -50,14 +50,14 @@ function Menu:update(dt)
     if input:pressed("go up") then
         self.active = self.active - 1
         if (self.active == 0) then
-            self.active = 2
+            self.active = 3
         end
         self.select:play()
     end
 
     if input:pressed("go down") then
         self.active = self.active + 1
-        if (self.active == 3) then
+        if (self.active == 4) then
             self.active = 1
         end
         self.select:play()
@@ -79,6 +79,10 @@ function Menu:update(dt)
         end
         if (self.active == 2) then
             love.event.quit()
+        end
+        if (self.active == 3) then
+            self.song:stop()
+            CurrentRoom = TestStage()
         end
     end
 end
@@ -125,6 +129,8 @@ function Menu:draw()
         logo:getWidth(),
         "center"
     )
+
+    love.graphics.printf("Test env", gw / 2 - 110, gh - 150, logo:getWidth(), "left")
 
     self.area:draw()
     camera:detach()

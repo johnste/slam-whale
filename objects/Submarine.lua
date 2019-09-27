@@ -33,7 +33,7 @@ function Submarine:update(dt)
     Submarine.super.update(self, dt)
     -- local xz, vz = self.collider:getLinearVelocity()
     -- camera:follow(self.x + xz / 2 * math.abs(math.cos(self.r)), self.y + vz / 2 * math.abs(math.sin(self.r)))
-    camera:follow(self.x, self.y)
+    camera:follow(self.x, (0 + self.y) / 1.2)
     self.r = self.collider:getAngle()
 
     if input:down("go right") then
@@ -107,15 +107,13 @@ function Submarine:update(dt)
         self.collider:setLinearVelocity(vx, vy * splash)
 
         self.splash:play()
-
-        self.water:splash(self.x, vy / 10 + math.abs(vx) / 50)
     end
 
     -- slow down when facing
     local vx, vy = self.collider:getLinearVelocity()
     local angle = self.collider:getAngle()
     local splash = 1 - math.abs(Vector.dot(math.cos(angle), math.sin(angle), Vector.normalize(vx, vy)))
-
+    self.water:splash(self.collider)
     if (splash > 0.5) then
         self.collider:setLinearVelocity(vx * 0.98, vy * 0.98)
     end
@@ -172,17 +170,26 @@ function Submarine:draw()
         sub_tower:getHeight() / 2
     )
 
-    local xz, vz = self.collider:getLinearVelocity()
-    love.graphics.circle(
-        "fill",
-        self.x + xz / 2 * math.abs(math.cos(self.r)),
-        self.y + vz / 2 * math.abs(math.sin(self.r)),
-        5
-    )
+    -- local xz, vz = self.collider:getLinearVelocity()
+    -- love.graphics.circle(
+    --     "fill",
+    --     self.x + xz / 2 * math.abs(math.cos(self.r)),
+    --     self.y + vz / 2 * math.abs(math.sin(self.r)),
+    --     5
+    -- )
 
     --love.graphics.circle("line", self.x, self.y, self.w)
     --love.graphics.line(self.x, self.y, self.x + 2 * self.w * math.cos(self.r), self.y + 2 * self.w * math.sin(self.r))
 
-    -- love.graphics.print("x:" .. math.round(self.x, 0.1), self.x, self.y + 30)
+    local x1, y1, x2, y2, x3, y3, x4, y4 = self.collider:getBoundingBox()
+
+    love.graphics.print(
+        "x1:" ..
+            math.round(x1, 0.1) ..
+                "x2:" .. math.round(x2, 0.1) "x3:" .. math.round(x3, 0.1) "x4:" .. math.round(x4, 0.1),
+        self.x,
+        self.y
+    )
+
     -- love.graphics.print("y:" .. math.round(self.y, 0.1), self.x, self.y + 44)
 end
