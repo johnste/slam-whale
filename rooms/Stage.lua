@@ -7,7 +7,8 @@ function Stage:new()
     self.area:addPhysicsWorld(0, 0)
     self.area.world:addCollisionClass("Sub")
 
-    self.player = self.area:addEntity(Submarine(self.area, -1800, 100))
+    --self.player = self.area:addEntity(Submarine(self.area, -1800, 100))
+    self.water = self.area:addEntity(Water(self.area, 0, 0))
 
     self.player = self.area:addEntity(Submarine(self.area, 0, 200, self.water))
 
@@ -20,9 +21,6 @@ function Stage:new()
 
     -- self.area:addEntity(Tanker(self.area, 1300, 0))
 
-    -- self.area:addEntity(Plane(self.area, 1700, 0))
-
-<<<<<<< Updated upstream
     self.area:addEntity(Water(self.area, 200, 100))
 
     self.player = self.area:addEntity(Ship(self.area, 1800, 0))
@@ -35,7 +33,7 @@ function Stage:new()
             if love.math.random() < 0.5 then
                 self.player = self.area:addEntity(Ship(self.area, 2700, 0))
             elseif love.math.random() < 0.3 then
-                self.area:addEntity(Boat(self.area, 2700, 0, 1))
+                self.area:addEntity(Boat(self.area, 2700, 0, 1, nil, self.water))
             end
 
             self.timer:after(
@@ -45,7 +43,7 @@ function Stage:new()
                     if love.math.random() < 0.5 then
                         self.player = self.area:addEntity(Ship(self.area, 2700, 0))
                     elseif love.math.random() < 0.3 then
-                        self.area:addEntity(Boat(self.area, 2700, 0, 1))
+                        self.area:addEntity(Boat(self.area, 2700, 0, 1, self.water))
                     elseif love.math.random() < 0.5 then
                         self.player = self.area:addEntity(Tanker(self.area, 2700, 0))
                     elseif love.math.random() < 0.5 then
@@ -56,7 +54,6 @@ function Stage:new()
             )
         end
     )
-
 
     self.paused = false
     self.survivaltime = 0
@@ -137,7 +134,7 @@ function Stage:draw()
     end
     self.area:draw()
 
-    love.graphics.line(points)
+    -- love.graphics.line(points)
 
     love.graphics.setLineWidth(3)
     love.graphics.line(-2000, -100, -2000, 1000)

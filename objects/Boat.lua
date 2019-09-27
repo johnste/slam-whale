@@ -1,7 +1,7 @@
 Boat = BubbleEntity:extend()
 local sub_body
 
-function Boat:new(area, x, y, colrows)
+function Boat:new(area, x, y, colrows, water)
     Boat.super.new(self, area, x, y)
     self.r = 0
     self.rv = 1.22 * math.pi
@@ -9,6 +9,7 @@ function Boat:new(area, x, y, colrows)
     self.max_v = 100
     self.a = 100
     self.w = 64
+    self.water = water
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y, self.w, 24)
@@ -53,6 +54,12 @@ function Boat:update(dt)
 
     if (self.y > 1000) then
         self.dead = true
+    end
+
+    local vx, vy = self.collider:getLinearVelocity()
+
+    if (math.abs(vy) < 10) then
+        self.water:splash(self.x - self.w / 2, -vx / 40 + vy / 10)
     end
 
     if (not self.alive) then

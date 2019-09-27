@@ -25,6 +25,7 @@ love.load = function()
     camera = Camera()
     love.audio.setVolume(0.5)
     camera:setFollowStyle("LOCKON")
+    camera:setFollowLerp(0.14)
     -- input:bind(
     --     "h",
     --     function()
@@ -44,12 +45,12 @@ love.load = function()
         end
     )
 
-    -- input:bind(
-    --     "q",
-    --     function()
-    --         love.event.quit()
-    --     end
-    -- )
+    input:bind(
+        "q",
+        function()
+            love.event.quit()
+        end
+    )
 
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.graphics.setLineStyle("rough")
