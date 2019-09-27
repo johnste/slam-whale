@@ -4,7 +4,7 @@ function Bubble:new(area, x, y, vx)
     Bubble.super.new(self, area, x, y)
     self.radius = love.math.randomNormal(2, 2)
     self.vy = 0
-    self.vx = vx
+    self.vx = vx or 0
 end
 
 function Bubble:update(dt)

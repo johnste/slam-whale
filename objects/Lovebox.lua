@@ -1,4 +1,4 @@
-Lovebox = Entity:extend()
+Lovebox = BubbleEntity:extend()
 local boximg
 
 function Lovebox:new(area, x, y)
@@ -23,26 +23,6 @@ function Lovebox:new(area, x, y)
     boximg = love.graphics.newImage("img/lovebox.png")
     boombox = love.graphics.newImage("img/boombox.png")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
-
-    self.timer:after(
-        0.4,
-        function(f)
-            xv, yv = self.collider:getLinearVelocity()
-
-            if (love.math.random() > 0.3 and self.alive == false) then
-                xv, yv = self.collider:getLinearVelocity()
-
-                if (love.math.random() > 0.5) then
-                    self.area:addEntity(
-                        Bubble(self.area, self.x + math.cos(self.r) * self.w / 2, self.y - math.sin(self.r) * 24, xv)
-                    )
-                else
-                    self.area:addEntity(Bubble(self.area, self.x - math.cos(self.r) * self.w / 2, self.y, xv))
-                end
-            end
-            self.timer:after(0.2, f)
-        end
-    )
 end
 
 function Lovebox:update(dt)

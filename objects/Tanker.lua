@@ -1,4 +1,4 @@
-Tanker = Entity:extend()
+Tanker = BubbleEntity:extend()
 local sub_body
 
 function Tanker:new(area, x, y, colrows)
@@ -53,26 +53,6 @@ function Tanker:new(area, x, y, colrows)
             end
         end
     end
-
-    self.timer:after(
-        0.4,
-        function(f)
-            xv, yv = self.collider:getLinearVelocity()
-
-            if (love.math.random() > 0.3 and self.alive == false) then
-                xv, yv = self.collider:getLinearVelocity()
-
-                if (love.math.random() > 0.5) then
-                    self.area:addEntity(
-                        Bubble(self.area, self.x + math.cos(self.r) * self.w / 2, self.y - math.sin(self.r) * 24, xv)
-                    )
-                else
-                    self.area:addEntity(Bubble(self.area, self.x - math.cos(self.r) * self.w / 2, self.y, xv))
-                end
-            end
-            self.timer:after(0.1, f)
-        end
-    )
 end
 
 function Tanker:update(dt)

@@ -1,4 +1,4 @@
-Fish = Entity:extend()
+Fish = BubbleEntity:extend()
 
 function Fish:new(area, x, y)
     Fish.super.new(self, area, x, y)
@@ -11,16 +11,6 @@ function Fish:new(area, x, y)
     else
         self.direction = -1
     end
-
-    self.timer:after(
-        0.4,
-        function(f)
-            if (love.math.random() > 0.3) then
-                self.area:addEntity(Bubble(self.area, self.x, self.y, self.vx))
-            end
-            self.timer:after(0.61, f)
-        end
-    )
 
     fish = love.graphics.newImage("img/fish.png")
 end

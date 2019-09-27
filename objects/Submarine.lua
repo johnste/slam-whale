@@ -1,4 +1,4 @@
-Submarine = Entity:extend()
+Submarine = BubbleEntity:extend()
 local sub_body
 local sub_wings
 local sub_tower
@@ -26,22 +26,6 @@ function Submarine:new(area, x, y)
     sub_body = love.graphics.newImage("img/sub-body.png")
     sub_wings = love.graphics.newImage("img/sub-wings.png")
     sub_tower = love.graphics.newImage("img/sub-tower.png")
-
-    self.timer:after(
-        0.4,
-        function(f)
-            xv, yv = self.collider:getLinearVelocity()
-
-            if (love.math.random() * math.max(self.direction, 0) < 0.2 and Vector.len(xv, yv) > 10) then
-                xv, yv = self.collider:getLinearVelocity()
-
-                self.area:addEntity(
-                    Bubble(self.area, self.x - math.cos(self.r) * self.w, self.y - math.sin(self.r) * self.w, xv)
-                )
-            end
-            self.timer:after(0.1, f)
-        end
-    )
 end
 
 function Submarine:update(dt)

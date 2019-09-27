@@ -9,17 +9,20 @@ function Stage:new()
 
     self.player = self.area:addEntity(Submarine(self.area, -1800, 100))
 
-    self.area:addEntity(Boat(self.area, -1200, 0))
+    self.player = self.area:addEntity(Submarine(self.area, 0, 200, self.water))
 
-    self.area:addEntity(Ship(self.area, -700, 0, 2))
-    self.area:addEntity(Boat(self.area, -100, 0, 2))
-    self.area:addEntity(Ship(self.area, 200, 0))
-    self.area:addEntity(Boat(self.area, 800, 0))
+    -- self.area:addEntity(Boat(self.area, -1200, 0, nil, self.water))
 
-    self.area:addEntity(Tanker(self.area, 1300, 0))
+    -- self.area:addEntity(Ship(self.area, -700, 0, 2))
+    -- self.area:addEntity(Boat(self.area, -100, 0, 2, self.water))
+    -- self.area:addEntity(Ship(self.area, 200, 0))
+    -- self.area:addEntity(Boat(self.area, 800, 0, nil, self.water))
 
-    self.area:addEntity(Plane(self.area, 1700, 0))
+    -- self.area:addEntity(Tanker(self.area, 1300, 0))
 
+    -- self.area:addEntity(Plane(self.area, 1700, 0))
+
+<<<<<<< Updated upstream
     self.area:addEntity(Water(self.area, 200, 100))
 
     self.player = self.area:addEntity(Ship(self.area, 1800, 0))
@@ -53,6 +56,7 @@ function Stage:new()
             )
         end
     )
+
 
     self.paused = false
     self.survivaltime = 0
