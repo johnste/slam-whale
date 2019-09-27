@@ -11,10 +11,25 @@ function Tanker:new(area, x, y, colrows)
     self.w = 256
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
-    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 25, self.w, 50)
+    -- local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 25, self.w, 50)
+
+    local body =
+        self.area.world:newPolygonCollider(
+        {
+            -self.w / 2,
+            -25,
+            -self.w / 2 + 15,
+            25,
+            self.w / 2,
+            -25,
+            self.w / 2,
+            25
+        }
+    )
+    body:setPosition(self.x, self.y)
 
     body:setObject(self)
-    body:setMass(80)
+    --body:setMass(80)
     body:setAngularDamping(1)
     body:setLinearDamping(0.04)
     body:setLinearVelocity(-25, 0)
@@ -32,9 +47,9 @@ function Tanker:new(area, x, y, colrows)
     for i = 1, rows do
         for j = 1, cols do
             if (colrows or love.math.random() > 0.4) then
-                self.area:addEntity(Lovebox(self.area, self.x + 25 - j * 16, self.y - i * 16))
+                self.area:addEntity(Lovebox(self.area, self.x + 25 - j * 16, self.y - i * 16 - 16))
             else
-                self.area:addEntity(Box(self.area, self.x + 25 - j * 16, self.y - i * 16))
+                self.area:addEntity(Box(self.area, self.x + 25 - j * 16, self.y - i * 16 - 16))
             end
         end
     end

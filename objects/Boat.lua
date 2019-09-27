@@ -11,7 +11,7 @@ function Boat:new(area, x, y, colrows)
     self.w = 64
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
-    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 12)
+    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y, self.w, 24)
     body:setObject(self)
     body:setMass(0.3)
     body:setAngularDamping(1)
@@ -67,7 +67,8 @@ function Boat:update(dt)
 
     if (self.y < -50) then
         self.alive = false
-        self.collider:applyForce(0, 3000 * dt)
+
+        self.collider:applyTorque(100)
     end
 
     if (self.y > 1000) then
@@ -97,7 +98,7 @@ function Boat:update(dt)
         self.collider:applyTorque(-100000 * dt)
     end
 
-    self.collider:applyForce(-3 * math.cos(self.r), -20 * math.sin(self.r))
+    self.collider:applyForce(-3 * math.cos(self.r), -200 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         camera:shake(8, 0.7, 30)

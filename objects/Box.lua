@@ -61,8 +61,9 @@ function Box:update(dt)
 
     if (self.y < 0) then
         self.collider:applyForce(0, 8000 * dt)
+        self.collider:applyTorque(5)
     elseif (self.y > 0) then
-        self.collider:applyForce(0, 100 * dt)
+        self.collider:applyForce(0, -1000 * dt)
     end
 
     -- if self.collider:enter("Sub") then

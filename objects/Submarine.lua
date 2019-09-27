@@ -19,6 +19,7 @@ function Submarine:new(area, x, y)
     body:setAngularDamping(1)
     body:setLinearDamping(0.1)
     body:setCollisionClass("Sub")
+    body:setBullet(true)
 
     self.collider = body
 

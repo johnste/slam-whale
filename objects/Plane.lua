@@ -2,7 +2,8 @@ Plane = Entity:extend()
 local sub_body
 
 function Plane:new(area, x, y, colrows)
-    Plane.super.new(self, area, x, y - 200)
+    self.level = -love.math.random() * 200 - 50
+    Plane.super.new(self, area, x, y + self.level)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0
@@ -77,9 +78,9 @@ function Plane:update(dt)
         self.explosion_underwater:play()
     end
 
-    if (self.y < -200) then
+    if (self.y < self.level) then
         self.collider:applyForce(0, 3000 * dt)
-    elseif (self.y > -200) then
+    elseif (self.y > self.level) then
         self.collider:applyForce(0, -1200 * dt)
     end
 
