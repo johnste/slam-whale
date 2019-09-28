@@ -58,10 +58,6 @@ function Boat:update(dt)
 
     local vx, vy = self.collider:getLinearVelocity()
 
-    if (math.abs(vy) < 10) then
-        self.water:splash(self.x - self.w / 2, -vx / 40 + vy / 10)
-    end
-
     if (not self.alive) then
         return
     end

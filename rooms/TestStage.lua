@@ -6,10 +6,56 @@ function TestStage:new()
     self.area:addPhysicsWorld(0, 0)
     self.area.world:addCollisionClass("Sub")
 
-    --self.player = self.area:addEntity(Submarine(self.area, -1800, 100))
     self.water = self.area:addEntity(Water(self.area, 0, 0))
 
     self.player = self.area:addEntity(Submarine(self.area, 0, 200, self.water))
+
+    input:bind(
+        "5",
+        function()
+            self.area:addEntity(Bobby(self.area, self.player.x, -100, nil, self.water))
+        end
+    )
+
+    input:bind(
+        "1",
+        function()
+            self.area:addEntity(Boat(self.area, self.player.x, -100, nil, self.water))
+        end
+    )
+
+    input:bind(
+        "2",
+        function()
+            self.area:addEntity(Ship(self.area, self.player.x, -100, nil, self.water))
+        end
+    )
+    input:bind(
+        "3",
+        function()
+            self.area:addEntity(Tanker(self.area, self.player.x, -100, nil, self.water))
+        end
+    )
+    input:bind(
+        "4",
+        function()
+            self.area:addEntity(Plane(self.area, self.player.x, -100, nil, self.water))
+        end
+    )
+
+    input:bind(
+        "wheeldown",
+        function()
+            camera.scale = math.max(1, camera.scale - 1)
+        end
+    )
+
+    input:bind(
+        "wheelup",
+        function()
+            camera.scale = math.min(10, camera.scale + 1)
+        end
+    )
 
     self.main_canvas = love.graphics.newCanvas(gw, gh)
     self.timer = Timer()

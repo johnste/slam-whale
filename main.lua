@@ -5,6 +5,7 @@ Camera = require "libraries/stalkerx/Camera"
 Timer = require "libraries/enhanced_timer/EnhancedTimer"
 Vector = require "libraries/hump/vector-light"
 moonshine = require "libraries/moonshine"
+mlib = require "libraries/mlib/mlib"
 
 pushing = "false"
 
@@ -26,6 +27,7 @@ love.load = function()
     love.audio.setVolume(0.5)
     camera:setFollowStyle("LOCKON")
     camera:setFollowLerp(0.14)
+
     -- input:bind(
     --     "h",
     --     function()

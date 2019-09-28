@@ -36,6 +36,10 @@ end
 
 function BubbleEntity:update(dt)
     BubbleEntity.super.update(self, dt)
+
+    if (self.water and self.collider) then
+        self.water:splash(self.collider)
+    end
 end
 
 function BubbleEntity:draw()

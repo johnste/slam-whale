@@ -45,19 +45,8 @@ function Box:update(dt)
     elseif (self.y > 0) then
         self.collider:applyForce(0, -1000 * dt)
     end
-
-    -- if self.collider:enter("Sub") then
-    --     self.collider:applyLinearImpulse(0, 100)
-    --     camera:shake(8, 0.7, 30)
-    --     self.explosion:play()
-
-    -- end
 end
 
 function Box:draw()
     love.graphics.draw(boximg, self.x, self.y, self.r, 1, 1, boximg:getWidth() / 2, boximg:getHeight() / 2)
-
-    -- if not self.alive and love.math.random() > 0.9 then
-    --     love.graphics.circle("line", self.x, self.y, 150)
-    -- end
 end
