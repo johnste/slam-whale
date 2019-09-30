@@ -93,8 +93,15 @@ function Water:splash(collider)
     CY = cy
 
     if cx and cy then
+        local normalized = Vector.normalize(vx, vy)
+        local density = 4
+        local dragMag = density * normalized * normalized
+        local dragForcex = dragMag * -vx
+        local dragForcey = dragMag * -vy
+        collider:applyForce(dragForcex, dragForcey)
+
         collider:applyForce(0, -area * collider:getDensity() * 2, cx, cy)
-        local force = ((-math.sqrt(math.abs(vx)) + vy / 10) * (mass or 1) / (nmax - nmin + 1) / 1 * area) / 10000
+        local force = ((-math.sqrt(math.abs(vx)) + vy / 10) * (mass or 1) / (nmax - nmin + 1) / 1 * area) / 100000
 
         if math.abs(ymin) < 5 or math.abs(ymax) < 5 then
             --print("splash", nmin, nmax, force)
