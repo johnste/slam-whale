@@ -69,19 +69,7 @@ function Boat:update(dt)
         self.explosion_underwater:play()
     end
 
-    if (self.y < 0) then
-        self.collider:applyForce(0, 3000 * dt)
-    elseif (self.y > 0) then
-        self.collider:applyForce(0, -1200 * dt)
-    end
-
-    if (self.collider:getAngle() < 0.1) then
-        self.collider:applyTorque(100000 * dt)
-    else
-        self.collider:applyTorque(-100000 * dt)
-    end
-
-    self.collider:applyForce(-3 * math.cos(self.r), -200 * math.sin(self.r))
+    --self.collider:applyForce(-3 * math.cos(self.r), -200 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         camera:shake(8, 0.7, 30)

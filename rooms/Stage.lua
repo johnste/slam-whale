@@ -3,7 +3,7 @@ wf = require "libraries/windfield"
 
 function Stage:new()
     self.area = Area(self)
-    love.physics.setMeter(10)
+    love.physics.setMeter(4)
     self.area:addPhysicsWorld(0, 0)
     self.area.world:addCollisionClass("Sub")
 

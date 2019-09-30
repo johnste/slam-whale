@@ -3,7 +3,7 @@ wf = require "libraries/windfield"
 
 function Menu:new()
     self.area = Area(self)
-    love.physics.setMeter(10)
+    love.physics.setMeter(4)
     self.area:addPhysicsWorld(0, 0)
 
     self.main_canvas = love.graphics.newCanvas(gw, gh)

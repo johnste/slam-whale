@@ -22,7 +22,10 @@ function intersection(cp1, cp2, s, e)
     return {x = x, y = y}
 end
 
-function clip(subjectPolygon, clipPolygon)
+function clip(_subjectPolygon, _clipPolygon)
+    local subjectPolygon = toCoordinates(_subjectPolygon)
+    local clipPolygon = toCoordinates(_clipPolygon)
+
     local outputList = subjectPolygon
     local cp1 = clipPolygon[#clipPolygon]
     for _, cp2 in ipairs(clipPolygon) do -- WP clipEdge is cp1,cp2 here
@@ -42,36 +45,22 @@ function clip(subjectPolygon, clipPolygon)
         end
         cp1 = cp2
     end
-    return outputList
+    return fromCoordinates(outputList)
 end
 
-function polygonCenter(polygon)
-    local x, y
-    for _, p in ipairs(polygon) do
-        x = x + p.x
-        y = y + p.y
+function toCoordinates(vertices)
+    local result = {}
+    for i = 1, #vertices, 2 do
+        result[#result + 1] = {x = vertices[i], y = vertices[i + 1]}
     end
-
-    return x / #polygon, y / #polygon
+    return result
 end
 
-function printTable(table, indent)
-    indent = indent or 0
-
-    if indent == 0 then
-        print("<table>")
+function fromCoordinates(vertices)
+    local result = {}
+    for i, p in ipairs(vertices) do
+        result[#result + 1] = p.x
+        result[#result + 1] = p.y
     end
-
-    for k, v in pairs(table) do
-        if type(v) == "table" then
-            print(string.rep(">", indent + 1) .. k)
-            printTable(v, indent + 2)
-        else
-            print(string.rep(">", indent + 1) .. k, v)
-        end
-    end
-
-    if indent == 0 then
-        print("</table>")
-    end
+    return result
 end

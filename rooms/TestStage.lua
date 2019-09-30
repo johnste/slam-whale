@@ -2,8 +2,8 @@ TestStage = Object:extend()
 
 function TestStage:new()
     self.area = Area(self)
-    love.physics.setMeter(10)
-    self.area:addPhysicsWorld(0, 0)
+    love.physics.setMeter(4)
+    self.area:addPhysicsWorld(0, 900)
     self.area.world:addCollisionClass("Sub")
 
     self.water = self.area:addEntity(Water(self.area, 0, 0))
@@ -13,33 +13,33 @@ function TestStage:new()
     input:bind(
         "5",
         function()
-            self.area:addEntity(Bobby(self.area, self.player.x, -100, nil, self.water))
+            self.area:addEntity(Bobby(self.area, self.player.x, -100, 0, self.water))
         end
     )
 
     input:bind(
         "1",
         function()
-            self.area:addEntity(Boat(self.area, self.player.x, -100, nil, self.water))
+            self.area:addEntity(Boat(self.area, self.player.x, -100, 0, self.water))
         end
     )
 
     input:bind(
         "2",
         function()
-            self.area:addEntity(Ship(self.area, self.player.x, -100, nil, self.water))
+            self.area:addEntity(Ship(self.area, self.player.x, -100, 0, self.water))
         end
     )
     input:bind(
         "3",
         function()
-            self.area:addEntity(Tanker(self.area, self.player.x, -100, nil, self.water))
+            self.area:addEntity(Tanker(self.area, self.player.x, -100, 0, self.water))
         end
     )
     input:bind(
         "4",
         function()
-            self.area:addEntity(Plane(self.area, self.player.x, -100, nil, self.water))
+            self.area:addEntity(Plane(self.area, self.player.x, -100, 0, self.water))
         end
     )
 

@@ -3,7 +3,6 @@ BubbleEntity = Entity:extend()
 function BubbleEntity:new(area, x, y, vx)
     BubbleEntity.super.new(self, area, x, y)
 
-    print("agesbvb")
     self.timer:after(
         1,
         function(f)
@@ -14,7 +13,6 @@ function BubbleEntity:new(area, x, y, vx)
                     xv, yv = self.collider:getLinearVelocity()
                 end
 
-                --x1, y1, x2, y2, x3, y3, x4, y4 = self.collider:getBoundingBox()
                 if (not self.alive) then
                     self.area:addEntity(Bubble(self.area, self.x, self.y, xv))
                 elseif (love.math.random() > 0.8) then
@@ -39,6 +37,18 @@ function BubbleEntity:update(dt)
 
     if (self.water and self.collider) then
         self.water:splash(self.collider)
+
+        if (self.y > 1000) then
+            self.collider:applyForce(0, -30000 * dt)
+        end
+
+        if (self.x > 2000) then
+            self.collider:applyForce(-30000 * dt, 0)
+        end
+
+        if (self.x < -2000) then
+            self.collider:applyForce(30000 * dt, 0)
+        end
     end
 end
 

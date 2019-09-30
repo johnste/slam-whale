@@ -1,7 +1,7 @@
 Ship = BubbleEntity:extend()
 local sub_body
 
-function Ship:new(area, x, y, colrows)
+function Ship:new(area, x, y, colrows, water)
     Ship.super.new(self, area, x, y)
     self.r = 0
     self.rv = 1.22 * math.pi
@@ -9,6 +9,7 @@ function Ship:new(area, x, y, colrows)
     self.max_v = 100
     self.a = 100
     self.w = 128
+    self.water = water
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 24)
@@ -65,19 +66,7 @@ function Ship:update(dt)
         self.explosion_underwater:play()
     end
 
-    if (self.y < 0) then
-        self.collider:applyForce(0, 30000 * dt)
-    elseif (self.y > 0) then
-        self.collider:applyForce(0, -16000 * dt)
-    end
-
-    if (self.collider:getAngle() < 0) then
-        self.collider:applyTorque(1000000 * dt)
-    else
-        self.collider:applyTorque(-1000000 * dt)
-    end
-
-    self.collider:applyForce(-40 * math.cos(self.r), -20 * math.sin(self.r))
+    --self.collider:applyForce(-40 * math.cos(self.r), -20 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         camera:shake(8, 0.7, 30)

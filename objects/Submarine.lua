@@ -18,7 +18,7 @@ function Submarine:new(area, x, y, water)
     local body = self.area.world:newRectangleCollider(self.x - 16, self.y - 4, 32, 8)
     body:setObject(self)
     body:setAngularDamping(1)
-    body:setLinearDamping(0.1)
+    body:setLinearDamping(0)
     body:setCollisionClass("Sub")
     body:setBullet(true)
 
@@ -27,13 +27,15 @@ function Submarine:new(area, x, y, water)
     sub_body = love.graphics.newImage("img/sub-body.png")
     sub_wings = love.graphics.newImage("img/sub-wings.png")
     sub_tower = love.graphics.newImage("img/sub-tower.png")
+
+    self.jump = love.audio.newSource("sfx/jump.wav", "static")
+    self.slam = love.audio.newSource("sfx/slam.wav", "static")
+    self.splash = love.audio.newSource("sfx/splash.wav", "static")
 end
 
 function Submarine:update(dt)
     Submarine.super.update(self, dt)
-    -- local xz, vz = self.collider:getLinearVelocity()
-    -- camera:follow(self.x + xz / 2 * math.abs(math.cos(self.r)), self.y + vz / 2 * math.abs(math.sin(self.r)))
-    camera:follow(self.x, (0 + self.y) / 1.2)
+    camera:follow(self.x, self.y / 1.2)
     self.r = self.collider:getAngle()
 
     if input:down("go right") then
@@ -86,32 +88,21 @@ function Submarine:update(dt)
         self.collider:applyForce(self.v * math.cos(self.r), self.v * math.sin(self.r))
     end
 
-    local x, y = Vector.normalize(self.collider:getLinearVelocity())
-    self.direction = Vector.dot(x, y, math.cos(self.r), math.sin(self.r))
-
-    self.jump = love.audio.newSource("sfx/jump.wav", "static")
-    self.slam = love.audio.newSource("sfx/slam.wav", "static")
-    self.splash = love.audio.newSource("sfx/splash.wav", "static")
-
     --self.collider:setLinearVelocity(self.v * math.cos(self.r), self.v * math.sin(self.r))
 
+    local vx, vy = self.collider:getLinearVelocity()
+    local angle = self.collider:getAngle()
+
     if (self.lasty < 0 and self.y >= 0) then
-        local vx, vy = self.collider:getLinearVelocity()
-
-        local angle = self.collider:getAngle()
-
+        -- Slow down fish if it hits the water belly flop style
         local splash = math.abs(Vector.dot(math.cos(angle), math.sin(angle), 0, 1))
-
-        self.collider:setLinearVelocity(vx, vy * splash)
-
+        self.collider:applyLinearImpulse(0, -vy * self.collider:getMass() * (1 - splash))
         self.splash:play()
     end
 
-    -- slow down when facing
     local vx, vy = self.collider:getLinearVelocity()
-    local angle = self.collider:getAngle()
+    -- slow down when not facing forwards
     local splash = 1 - math.abs(Vector.dot(math.cos(angle), math.sin(angle), Vector.normalize(vx, vy)))
-
     if (splash > 0.5) then
         self.collider:setLinearVelocity(vx * 0.98, vy * 0.98)
     end
@@ -121,24 +112,6 @@ function Submarine:update(dt)
     end
 
     self.lasty = self.y
-
-    if (self.y < 0) then
-        self.collider:applyForce(0, 30000 * dt)
-    elseif (self.y > 0) then
-        self.collider:applyForce(0, -100 * dt)
-    end
-
-    if (self.y > 1000) then
-        self.collider:applyForce(0, -30000 * dt)
-    end
-
-    if (self.x > 2000) then
-        self.collider:applyForce(-30000 * dt, 0)
-    end
-
-    if (self.x < -2000) then
-        self.collider:applyForce(30000 * dt, 0)
-    end
 end
 
 function Submarine:draw()
@@ -194,4 +167,7 @@ function Submarine:draw()
     -- love.graphics.circle("line", x2, y2, 5)
 
     -- love.graphics.print("y:" .. math.round(self.y, 0.1), self.x, self.y + 44)
+
+    -- love.graphics.polygon("line", {self.collider:getWorldPoints(self.collider:getPoints())})
+    -- print(inspect({self.collider:getWorldPoints(self.collider:getPoints())}))
 end

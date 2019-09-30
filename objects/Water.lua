@@ -55,16 +55,54 @@ function Water:splash(collider)
     local vx, vy = collider:getLinearVelocity()
     local mass = collider:getMass()
 
-    local force = (-math.sqrt(math.abs(vx)) + vy / 10) * (mass or 1) / (nmax - nmin + 1) * 100
-
     --print(closestIndex)
 
-    if math.abs(ymin) < 5 or math.abs(ymax) < 5 then
+    --[[ if math.abs(ymin) < 5 or math.abs(ymax) < 5 then
         --print("splash", nmin, nmax, force)
         for n = nmin, nmax do
             --print("splashing", n)
 
             self.points[n].y = self.points[n].y + force
+        end
+    end ]]
+    local a = self:getHeight(xmin)
+    local b = self:getHeight(xmax)
+
+    local vertices = {
+        xmin,
+        a,
+        xmax,
+        b,
+        xmax,
+        2000,
+        xmin,
+        2000
+    }
+
+    local thing = {collider:getWorldPoints(collider:getPoints())}
+
+    local vertices3 = clip(vertices, thing)
+
+    if #vertices3 < 6 then
+        return
+    end
+
+    local cx, cy = mlib.polygon.getCentroid(vertices3)
+    local area = mlib.polygon.getArea(vertices3)
+    CX = cx
+    CY = cy
+
+    if cx and cy then
+        collider:applyForce(0, -area * collider:getDensity() * 2, cx, cy)
+        local force = ((-math.sqrt(math.abs(vx)) + vy / 10) * (mass or 1) / (nmax - nmin + 1) / 1 * area) / 10000
+
+        if math.abs(ymin) < 5 or math.abs(ymax) < 5 then
+            --print("splash", nmin, nmax, force)
+            for n = nmin, nmax do
+                --print("splashing", n)
+
+                self.points[n].y = self.points[n].y + force
+            end
         end
     end
 end
@@ -80,6 +118,10 @@ function Water:getHeight(x)
     return self.points[math.floor(index)].y * (1 - ratio) + self.points[math.ceil(index)].y * (ratio)
 end
 
+SPRING_FORCE = 0.005
+BASELINE_FORCE = 0.005
+DAMPENING = 0.99
+
 function Water:update(dt)
     Water.super.update(self, dt)
 
@@ -93,50 +135,28 @@ function Water:update(dt)
                 forceFromLeft = 0
             else
                 local dy = self.points[n - 1].y - p.y
-                forceFromLeft = dy * 0.005
+                forceFromLeft = dy * SPRING_FORCE
             end
 
             if n == #self.points then
                 forceFromRight = 0
             else
                 local dy = self.points[n + 1].y - p.y
-                forceFromRight = dy * 0.005
+                forceFromRight = dy * SPRING_FORCE
             end
 
             local dy = self.y - p.y
-            local forceToBaseLine = dy * 0.005
+            local forceToBaseLine = dy * BASELINE_FORCE
 
             local force = force + forceFromLeft + forceFromRight + forceToBaseLine
 
             local acceleration = force / p.mass
 
-            p.speed.y = 0.99 * p.speed.y + acceleration
+            p.speed.y = DAMPENING * p.speed.y + acceleration
 
             p.y = p.y + p.speed.y
         end
     end
-end
-
-function drawPoly(polygon)
-    if not polygon or #polygon ~= 4 then
-        print("no poly")
-        return
-    else
-        print("yo")
-        printTable(polygon)
-    end
-
-    love.graphics.polygon(
-        "fill",
-        polygon[1].x,
-        polygon[1].y,
-        polygon[2].x,
-        polygon[2].y,
-        polygon[3].x,
-        polygon[3].y,
-        polygon[4].x,
-        polygon[4].y
-    )
 end
 
 function Water:draw()
@@ -154,25 +174,49 @@ function Water:draw()
         local b = self:getHeight(100 + 100 * v)
 
         if (a and b) then
-            local polygon = {}
-            polygon[1] = {x = 100 * v, y = a}
-            polygon[2] = {x = 100 + 100 * v, y = b}
-            polygon[3] = {x = 100 + 100 * v, y = 1000}
-            polygon[4] = {x = 100 * v, y = 1000}
+            local vertices = {
+                100 * v,
+                a,
+                100 + 100 * v,
+                b,
+                100 + 100 * v,
+                1000,
+                100 * v,
+                1000
+            }
 
-            drawPoly(polygon)
+            love.graphics.polygon("fill", vertices)
 
-            local polygon2 = {}
-            polygon2[1] = {x = 100 * v, y = -200}
-            polygon2[2] = {x = 100 + 100 * v, y = -200}
-            polygon2[3] = {x = 100 + 100 * v, y = 0}
-            polygon2[4] = {x = 100 * v, y = 0}
+            local vertices2 = {
+                100 * v,
+                -200,
+                100 + 100 * v,
+                -200,
+                100 + 100 * v,
+                0,
+                100 * v,
+                0
+            }
             love.graphics.setColor(0.3, 1, 0.3, 0.5)
-            drawPoly(polygon2)
-            local polygon3 = clip(polygon, polygon2)
+            love.graphics.polygon("fill", vertices2)
+
+            local vertices3 = clip(vertices, vertices2)
             love.graphics.setColor(1, 0.3, 0.3, 0.5)
-            drawPoly(polygon3)
+
+            if (type(vertices3) == "table" and #vertices3 >= 6) then
+                love.graphics.polygon("fill", vertices3)
+
+                love.graphics.setColor(1, 0.3, 1, 0.7)
+                local cx, cy = mlib.polygon.getCentroid(vertices3)
+                local area = mlib.polygon.getArea(vertices3)
+
+                love.graphics.print("" .. area, cx, cy)
+            end
         end
     end
     love.graphics.setColor(1, 1, 1, 1)
+
+    if (CX and CY) then
+    --love.graphics.circle("line", CX, CY, 20)
+    end
 end

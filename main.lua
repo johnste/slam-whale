@@ -6,6 +6,7 @@ Timer = require "libraries/enhanced_timer/EnhancedTimer"
 Vector = require "libraries/hump/vector-light"
 moonshine = require "libraries/moonshine"
 mlib = require "libraries/mlib/mlib"
+inspect = require "libraries/inspect/inspect"
 
 pushing = "false"
 

@@ -1,7 +1,7 @@
 Tanker = BubbleEntity:extend()
 local sub_body
 
-function Tanker:new(area, x, y, colrows)
+function Tanker:new(area, x, y, colrows, water)
     Tanker.super.new(self, area, x, y)
     self.r = 0
     self.rv = 1.22 * math.pi
@@ -9,6 +9,7 @@ function Tanker:new(area, x, y, colrows)
     self.max_v = 100
     self.a = 100
     self.w = 256
+    self.water = water
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     -- local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 25, self.w, 50)
@@ -31,7 +32,7 @@ function Tanker:new(area, x, y, colrows)
     body:setObject(self)
     --body:setMass(80)
     body:setAngularDamping(1)
-    body:setLinearDamping(0.04)
+    body:setLinearDamping(0.104)
     body:setLinearVelocity(-25, 0)
 
     self.collider = body
@@ -77,19 +78,7 @@ function Tanker:update(dt)
         self.explosion_underwater:play()
     end
 
-    if (self.y < 0) then
-        self.collider:applyForce(0, 50000 * dt)
-    elseif (self.y > 0) then
-        self.collider:applyForce(0, -460000 * dt)
-    end
-
-    if (self.collider:getAngle() < 0) then
-        self.collider:applyTorque(10000000 * dt)
-    else
-        self.collider:applyTorque(-10000000 * dt)
-    end
-
-    self.collider:applyForce(-160 * math.cos(self.r), -20 * math.sin(self.r))
+    --self.collider:applyForce(-160 * math.cos(self.r), -20 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         camera:shake(8, 0.7, 30)
