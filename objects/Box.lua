@@ -48,5 +48,6 @@ function Box:update(dt)
 end
 
 function Box:draw()
+    Box.super.draw(self)
     love.graphics.draw(boximg, self.x, self.y, self.r, 1, 1, boximg:getWidth() / 2, boximg:getHeight() / 2)
 end

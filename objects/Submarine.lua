@@ -13,15 +13,15 @@ function Submarine:new(area, x, y, water)
     self.w = 12
     self.lasty = 0
     self.water = water
+    self.swim = true
 
-    -- self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     local body = self.area.world:newRectangleCollider(self.x - 16, self.y - 4, 32, 8)
     body:setObject(self)
     body:setAngularDamping(1)
-    body:setLinearDamping(0)
+    body:setLinearDamping(0.04)
     body:setCollisionClass("Sub")
     body:setBullet(true)
-
+    body:setMass(0.5)
     self.collider = body
 
     sub_body = love.graphics.newImage("img/sub-body.png")
@@ -63,8 +63,11 @@ function Submarine:update(dt)
     if input:down("turbo") then
         --self.r = self.r - self.rv * dt
         if (self.y < 0) then
-            self.collider:applyForce(0, 500)
+            -- self.collider:applyForce(0, 500)
+            self.collider:setMass(4)
         end
+    else
+        self.collider:setMass(0.5)
     end
 
     if (self.y < 0) then
@@ -115,6 +118,7 @@ function Submarine:update(dt)
 end
 
 function Submarine:draw()
+    Submarine.super.draw(self)
     -- for k, v in pairs(image) do
     --     print(k, v)
     -- end
@@ -165,8 +169,6 @@ function Submarine:draw()
     -- love.graphics.circle("fill", x1, y1, 5)
 
     -- love.graphics.circle("line", x2, y2, 5)
-
-    -- love.graphics.print("y:" .. math.round(self.y, 0.1), self.x, self.y + 44)
 
     -- love.graphics.polygon("line", {self.collider:getWorldPoints(self.collider:getPoints())})
     -- print(inspect({self.collider:getWorldPoints(self.collider:getPoints())}))

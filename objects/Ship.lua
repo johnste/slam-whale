@@ -20,7 +20,7 @@ function Ship:new(area, x, y, colrows, water)
     body:setLinearVelocity(-25, 0)
 
     local cabin = self.area.world:newRectangleCollider(self.x + self.w / 2 - 28 - 8, self.y - 22 - 20, 28, 30)
-
+    cabin:setMass(0.1)
     self.area.world:addJoint("WeldJoint", body, cabin, self.x + self.w / 2, self.y - 12)
 
     self.collider = body
@@ -75,6 +75,8 @@ function Ship:update(dt)
 end
 
 function Ship:draw()
+    Ship.super.draw(self)
+
     love.graphics.draw(
         sub_body,
         self.x,

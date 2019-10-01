@@ -79,6 +79,7 @@ function Plane:update(dt)
 end
 
 function Plane:draw()
+    Plane.super.draw(self)
     love.graphics.draw(
         sub_body,
         self.x,

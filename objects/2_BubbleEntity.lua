@@ -53,4 +53,19 @@ function BubbleEntity:update(dt)
 end
 
 function BubbleEntity:draw()
+    if (self.collider) then
+        love.graphics.print(
+            inspect(
+                {
+                    mass = self.collider:getMass(),
+                    density = self.collider:getDensity(),
+                    grav = self.gravity,
+                    lift = self.lift or "0",
+                    debug = self.debug
+                }
+            ),
+            self.x,
+            self.y + 44
+        )
+    end
 end

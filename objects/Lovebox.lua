@@ -98,6 +98,7 @@ function Lovebox:update(dt)
 end
 
 function Lovebox:draw()
+    Lovebox.super.draw(self)
     local scale = 1
     if self.exploding and love.math.random() > 0.5 then
         love.graphics.draw(boombox, self.x, self.y, self.r, 1, 1, boximg:getWidth() / 2, boximg:getHeight() / 2)

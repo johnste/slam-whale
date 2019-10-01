@@ -78,6 +78,7 @@ function Boat:update(dt)
 end
 
 function Boat:draw()
+    Boat.super.draw(self)
     love.graphics.draw(
         sub_body,
         self.x,

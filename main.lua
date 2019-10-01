@@ -25,7 +25,7 @@ love.load = function()
     input:bind("escape", "pause")
 
     camera = Camera()
-    love.audio.setVolume(0.5)
+    love.audio.setVolume(0)
     camera:setFollowStyle("LOCKON")
     camera:setFollowLerp(0.14)
 

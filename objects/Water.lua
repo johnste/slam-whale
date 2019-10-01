@@ -89,22 +89,41 @@ function Water:splash(collider)
 
     local cx, cy = mlib.polygon.getCentroid(vertices3)
     local area = mlib.polygon.getArea(vertices3)
+    local fullArea = mlib.polygon.getArea(collider:getPoints())
     CX = cx
     CY = cy
 
     if cx and cy then
         local normalized = Vector.normalize(vx, vy)
-        local density = 4
+        local density = 400
         local dragMag = density * normalized * normalized
         local dragForcex = dragMag * -vx
         local dragForcey = dragMag * -vy
-        collider:applyForce(dragForcex, dragForcey)
 
-        collider:applyForce(0, -area * collider:getDensity() * 2, cx, cy)
-        local force = ((-math.sqrt(math.abs(vx)) + vy / 10) * (mass or 1) / (nmax - nmin + 1) / 1 * area) / 100000
+        -- collider:applyForce(0, -area * collider:getDensity() * 2, cx, cy)
+        local percentage = area / fullArea
+        local obj = collider:getObject()
+        local lift = -percentage * collider:getMass() * 900 - collider:getMass() * 900 / 2
+        if obj.swim then
+            lift = -percentage * collider:getMass() * 900
+        else
+            collider:applyForce(dragForcex, dragForcey)
+        end
 
-        if math.abs(ymin) < 5 or math.abs(ymax) < 5 then
+        collider:applyForce(0, lift, cx, cy)
+        obj.debug = {
+            drag = {x = dragForcex, y = dragForcey},
+            lift = lift / (-collider:getMass() * 900)
+        }
+        local force =
+            math.min(
+            10,
+            math.max(-10, ((-math.sqrt(math.abs(vx)) + vy / 10) * (mass or 1) / (nmax - nmin + 1) / 1 * area) / 200)
+        )
+
+        if percentage > 0.1 and percentage < 0.9 then
             --print("splash", nmin, nmax, force)
+            print(force, nmax - nmin + 1)
             for n = nmin, nmax do
                 --print("splashing", n)
 
@@ -126,7 +145,7 @@ function Water:getHeight(x)
 end
 
 SPRING_FORCE = 0.005
-BASELINE_FORCE = 0.005
+BASELINE_FORCE = 0.0005
 DAMPENING = 0.99
 
 function Water:update(dt)

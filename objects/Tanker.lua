@@ -87,6 +87,8 @@ function Tanker:update(dt)
 end
 
 function Tanker:draw()
+    Tanker.super.draw(self)
+
     love.graphics.draw(
         sub_body,
         self.x,
