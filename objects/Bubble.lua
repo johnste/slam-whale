@@ -1,7 +1,7 @@
 Bubble = Entity:extend()
 
 function Bubble:new(area, x, y, vx)
-    Bubble.super.new(self, area, x, y)
+    Bubble.super.new(self, area, x, y, water)
     self.radius = love.math.randomNormal(2, 2)
     self.vy = 0
     self.vx = vx or 0

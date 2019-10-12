@@ -1,7 +1,7 @@
 Plane = BubbleEntity:extend()
-local sub_body
+local sub_body = love.graphics.newImage("img/biplane.png")
 
-function Plane:new(area, x, y, colrows)
+function Plane:new(area, x, y, colrows, water)
     self.level = -love.math.random() * 200 - 50
     Plane.super.new(self, area, x, y + self.level)
     self.r = 0
@@ -10,6 +10,8 @@ function Plane:new(area, x, y, colrows)
     self.max_v = 100
     self.a = 100
     self.w = 40
+    self.water = water
+    print("HEY", inspect(self.water))
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 20)
@@ -21,8 +23,6 @@ function Plane:new(area, x, y, colrows)
     body:setFriction(1)
 
     self.collider = body
-
-    sub_body = love.graphics.newImage("img/biplane.png")
 
     self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
@@ -62,12 +62,6 @@ function Plane:update(dt)
         self.collider:applyForce(0, 3000 * dt)
     elseif (self.y > self.level) then
         self.collider:applyForce(0, -1200 * dt)
-    end
-
-    if (self.collider:getAngle() < 0.1) then
-        self.collider:applyTorque(100000 * dt)
-    else
-        self.collider:applyTorque(-100000 * dt)
     end
 
     self.collider:applyForce(-3 * math.cos(self.r), -20 * math.sin(self.r))

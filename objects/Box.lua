@@ -2,7 +2,7 @@ Box = BubbleEntity:extend()
 local boximg
 
 function Box:new(area, x, y)
-    Box.super.new(self, area, x, y)
+    Box.super.new(self, area, x, y, water)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0

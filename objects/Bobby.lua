@@ -2,7 +2,7 @@ Bobby = BubbleEntity:extend()
 local boximg
 
 function Bobby:new(area, x, y, colrows, water)
-    Bobby.super.new(self, area, x, y)
+    Bobby.super.new(self, area, x, y, water)
     self.r = 0
     self.w = 12
     self.water = water
@@ -26,10 +26,10 @@ function Bobby:update(dt)
 
     local waterHeight = self.water:getHeight(self.x)
 
-    if (self.y < waterHeight) then
-        self.collider:applyForce(0, 100)
-    else
+    if (waterHeight and self.y > waterHeight) then
         self.collider:applyForce(0, -10)
+    else
+        self.collider:applyForce(0, 100)
     end
 end
 
@@ -37,5 +37,8 @@ function Bobby:draw()
     love.graphics.draw(boximg, self.x, self.y, self.r, 1, 1, boximg:getWidth() / 2, boximg:getHeight() / 2)
 
     local waterHeight = self.water:getHeight(self.x)
-    love.graphics.line(self.x, self.y, self.x, waterHeight)
+
+    if (waterHeight) then
+        love.graphics.line(self.x, self.y, self.x, waterHeight)
+    end
 end

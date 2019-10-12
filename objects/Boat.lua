@@ -1,8 +1,8 @@
 Boat = BubbleEntity:extend()
-local sub_body
+local sub_body = love.graphics.newImage("img/boat.png")
 
 function Boat:new(area, x, y, colrows, water)
-    Boat.super.new(self, area, x, y)
+    Boat.super.new(self, area, x, y, water)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0
@@ -12,17 +12,15 @@ function Boat:new(area, x, y, colrows, water)
     self.water = water
 
     --self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
-    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y, self.w, 24)
+    local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y, self.w, 12)
     body:setObject(self)
-    body:setMass(0.3)
-    body:setAngularDamping(1)
+    body:setMass(0.5)
+    body:setAngularDamping(5)
     body:setLinearDamping(0.04)
     body:setLinearVelocity(-25, 0)
     body:setFriction(1)
 
     self.collider = body
-
-    sub_body = love.graphics.newImage("img/boat.png")
 
     self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
@@ -43,38 +41,29 @@ end
 
 function Boat:update(dt)
     Boat.super.update(self, dt)
-
-    self.r = self.collider:getAngle()
-
-    if (self.y < -50) then
-        self.alive = false
-
-        self.collider:applyTorque(100)
-    end
-
-    if (self.y > 1000) then
-        self.dead = true
-    end
-
-    local vx, vy = self.collider:getLinearVelocity()
-
-    if (not self.alive) then
-        return
-    end
-
-    if (self.y > 40) then
-        self.alive = false
-        self.collider:setLinearDamping(0.14)
-        self.collider:applyAngularImpulse(500)
-        self.explosion_underwater:play()
-    end
-
-    --self.collider:applyForce(-3 * math.cos(self.r), -200 * math.sin(self.r))
-
-    if self.collider:enter("Sub") then
-        camera:shake(8, 0.7, 30)
-        self.explosion:play()
-    end
+    -- self.r = self.collider:getAngle()
+    -- if (self.y < -50) then
+    --     self.alive = false
+    --     self.collider:applyTorque(100)
+    -- end
+    -- if (self.y > 1000) then
+    --     self.dead = true
+    -- end
+    -- local vx, vy = self.collider:getLinearVelocity()
+    -- if (not self.alive) then
+    --     return
+    -- end
+    -- if (self.y > 40) then
+    --     self.alive = false
+    --     self.collider:setLinearDamping(0.14)
+    --     self.collider:applyAngularImpulse(500)
+    --     self.explosion_underwater:play()
+    -- end
+    -- --self.collider:applyForce(-3 * math.cos(self.r), -200 * math.sin(self.r))
+    -- if self.collider:enter("Sub") then
+    --     camera:shake(8, 0.7, 30)
+    --     self.explosion:play()
+    -- end
 end
 
 function Boat:draw()

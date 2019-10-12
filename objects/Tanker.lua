@@ -1,8 +1,8 @@
 Tanker = BubbleEntity:extend()
-local sub_body
+local sub_body = love.graphics.newImage("img/tanker.png")
 
 function Tanker:new(area, x, y, colrows, water)
-    Tanker.super.new(self, area, x, y)
+    Tanker.super.new(self, area, x, y, water)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0
@@ -31,13 +31,11 @@ function Tanker:new(area, x, y, colrows, water)
 
     body:setObject(self)
     --body:setMass(80)
-    body:setAngularDamping(1)
+    body:setAngularDamping(10)
     body:setLinearDamping(0.104)
     body:setLinearVelocity(-25, 0)
 
     self.collider = body
-
-    sub_body = love.graphics.newImage("img/tanker.png")
 
     self.explosion = love.audio.newSource("sfx/explosion.wav", "static")
     self.explosion_underwater = love.audio.newSource("sfx/underwater-explosion.wav", "static")
@@ -71,14 +69,14 @@ function Tanker:update(dt)
         return
     end
 
-    if (self.y > 40) then
-        self.alive = false
-        self.collider:setLinearDamping(0.14)
-        self.collider:applyAngularImpulse(5000)
-        self.explosion_underwater:play()
-    end
+    -- if (self.y > 40) then
+    --     self.alive = false
+    --     self.collider:setLinearDamping(0.14)
+    --     self.collider:applyAngularImpulse(5000)
+    --     self.explosion_underwater:play()
+    -- end
 
-    --self.collider:applyForce(-160 * math.cos(self.r), -20 * math.sin(self.r))
+    self.collider:applyForce(-2000 * math.cos(self.r), -20 * math.sin(self.r))
 
     if self.collider:enter("Sub") then
         camera:shake(8, 0.7, 30)

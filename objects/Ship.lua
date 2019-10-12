@@ -2,7 +2,7 @@ Ship = BubbleEntity:extend()
 local sub_body
 
 function Ship:new(area, x, y, colrows, water)
-    Ship.super.new(self, area, x, y)
+    Ship.super.new(self, area, x, y, water)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0

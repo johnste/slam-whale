@@ -1,10 +1,11 @@
 Submarine = BubbleEntity:extend()
-local sub_body
-local sub_wings
-local sub_tower
+
+local sub_body = love.graphics.newImage("img/sub-body.png")
+local sub_wings = love.graphics.newImage("img/sub-wings.png")
+local sub_tower = love.graphics.newImage("img/sub-tower.png")
 
 function Submarine:new(area, x, y, water)
-    Submarine.super.new(self, area, x, y)
+    Submarine.super.new(self, area, x, y, water)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 200
@@ -23,10 +24,6 @@ function Submarine:new(area, x, y, water)
     body:setBullet(true)
     body:setMass(0.5)
     self.collider = body
-
-    sub_body = love.graphics.newImage("img/sub-body.png")
-    sub_wings = love.graphics.newImage("img/sub-wings.png")
-    sub_tower = love.graphics.newImage("img/sub-tower.png")
 
     self.jump = love.audio.newSource("sfx/jump.wav", "static")
     self.slam = love.audio.newSource("sfx/slam.wav", "static")
@@ -60,13 +57,19 @@ function Submarine:update(dt)
         end
     end
 
-    if input:down("turbo") then
+    if input:pressed("turbo") then
         --self.r = self.r - self.rv * dt
         if (self.y < 0) then
             -- self.collider:applyForce(0, 500)
-            self.collider:setMass(4)
+            --self.collider:setMass(40)
+            local vx = self.collider:getLinearVelocity()
+            self.collider:setLinearVelocity(vx, 1000)
         end
     else
+        --self.collider:setMass(0.5)
+    end
+
+    if (self.y > 0) then
         self.collider:setMass(0.5)
     end
 
@@ -96,12 +99,12 @@ function Submarine:update(dt)
     local vx, vy = self.collider:getLinearVelocity()
     local angle = self.collider:getAngle()
 
-    if (self.lasty < 0 and self.y >= 0) then
-        -- Slow down fish if it hits the water belly flop style
-        local splash = math.abs(Vector.dot(math.cos(angle), math.sin(angle), 0, 1))
-        self.collider:applyLinearImpulse(0, -vy * self.collider:getMass() * (1 - splash))
-        self.splash:play()
-    end
+    -- if (self.lasty < 0 and self.y >= 0) then
+    --     -- Slow down fish if it hits the water belly flop style
+    --     local splash = math.abs(Vector.dot(math.cos(angle), math.sin(angle), 0, 1))
+    --     self.collider:applyLinearImpulse(0, -vy * self.collider:getMass() * (1 - splash))
+    --     self.splash:play()
+    -- end
 
     local vx, vy = self.collider:getLinearVelocity()
     -- slow down when not facing forwards

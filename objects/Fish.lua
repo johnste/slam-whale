@@ -1,7 +1,7 @@
 Fish = BubbleEntity:extend()
 
 function Fish:new(area, x, y)
-    Fish.super.new(self, area, x, y)
+    Fish.super.new(self, area, x, y, water)
 
     self.vy = 0
     self.vx = (love.math.random() - 0.5) * 5

@@ -64,3 +64,22 @@ function fromCoordinates(vertices)
     end
     return result
 end
+
+function table.copy(mytable) --mytable = the table you need to copy
+    newtable = {}
+
+    for k, v in pairs(mytable) do
+        newtable[k] = v
+    end
+    return newtable
+end
+
+function prettyprint(...)
+    local myVar = {...}
+
+    local output = {}
+    for i, v in pairs(myVar) do
+        output[#output + 1] = math.round(v, 0.01)
+    end
+    print(unpack(output))
+end

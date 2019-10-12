@@ -145,11 +145,28 @@ function Input:sequence(...)
     end
 end
 
-local key_to_button = {mouse1 = '1', mouse2 = '2', mouse3 = '3', mouse4 = '4', mouse5 = '5'} 
+local key_to_button = {mouse1 = '1', mouse2 = '2', mouse3 = '3', mouse4 = '4', mouse5 = '5'}
 local gamepad_to_button = {fdown = 'a', fup = 'y', fleft = 'x', fright = 'b', back = 'back', guide = 'guide', start = 'start',
                            leftstick = 'leftstick', rightstick = 'rightstick', l1 = 'leftshoulder', r1 = 'rightshoulder',
                            dpup = 'dpup', dpdown = 'dpdown', dpleft = 'dpleft', dpright = 'dpright'}
 local axis_to_button = {leftx = 'leftx', lefty = 'lefty', rightx = 'rightx', righty = 'righty', l2 = 'triggerleft', r2 = 'triggerright'}
+
+-- in LÖVE 11.0, love.keyboard.isDown raises an error when the key is not a KeyConstant
+local function isGamepadKey(key)
+    for k, _ in pairs(gamepad_to_button) do
+        if key == k then
+            return true
+        end
+    end
+
+    for k, _ in pairs(axis_to_button) do
+        if key == k then
+            return true
+        end
+    end
+
+    return false
+end
 
 function Input:down(action, interval, delay)
     if action and delay and interval then
@@ -174,10 +191,11 @@ function Input:down(action, interval, delay)
 
     elseif action and not interval and not delay then
         for _, key in ipairs(self.binds[action]) do
-            if (love.keyboard.isDown(key) or love.mouse.isDown(key_to_button[key] or 0)) then
+
+            if not isGamepadKey(key) and (love.keyboard.isDown(key) or love.mouse.isDown(key_to_button[key] or 0)) then
                 return true
             end
-            
+
             -- Supports only 1 gamepad, add more later...
             if self.joysticks[1] then
                 if axis_to_button[key] then
@@ -224,11 +242,11 @@ function Input:update()
 
     for k, v in pairs(self.repeat_state) do
         if v then
-            v.pressed = false 
+            v.pressed = false
             local t = love.timer.getTime() - v.pressed_time
-            if v.delay_stage then 
-                if t > v.delay then 
-                    v.pressed = true 
+            if v.delay_stage then
+                if t > v.delay then
+                    v.pressed = true
                     v.pressed_time = love.timer.getTime()
                     v.delay_stage = false
                 end
@@ -275,7 +293,7 @@ local button_to_gamepad = {a = 'fdown', y = 'fup', x = 'fleft', b = 'fright', ba
                            dpup = 'dpup', dpdown = 'dpdown', dpleft = 'dpleft', dpright = 'dpright'}
 
 function Input:gamepadpressed(joystick, button)
-    self.state[button_to_gamepad[button]] = true 
+    self.state[button_to_gamepad[button]] = true
 end
 
 function Input:gamepadreleased(joystick, button)

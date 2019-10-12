@@ -12,33 +12,33 @@ function TestStage:new()
     input:bind(
         "5",
         function()
-            self.area:addEntity(Bobby(self.area, self.player.x, 0, 0, self.water))
+            self.area:addEntity(Bobby(self.area, self.player.x, 0, -200, self.water))
         end
     )
 
     input:bind(
         "1",
         function()
-            self.area:addEntity(Boat(self.area, self.player.x, 0, 0, self.water))
+            self.area:addEntity(Boat(self.area, self.player.x, 0, -200, self.water))
         end
     )
 
     input:bind(
         "2",
         function()
-            self.area:addEntity(Ship(self.area, self.player.x, 0, 0, self.water))
+            self.area:addEntity(Ship(self.area, self.player.x, 0, -200, self.water))
         end
     )
     input:bind(
         "3",
         function()
-            self.area:addEntity(Tanker(self.area, self.player.x, 0, 0, self.water))
+            self.area:addEntity(Tanker(self.area, self.player.x, 0, -200, self.water))
         end
     )
     input:bind(
         "4",
         function()
-            self.area:addEntity(Plane(self.area, self.player.x, 0, 0, self.water))
+            self.area:addEntity(Plane(self.area, self.player.x, 0, -200, self.water))
         end
     )
 

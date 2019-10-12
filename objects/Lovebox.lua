@@ -1,14 +1,15 @@
 Lovebox = BubbleEntity:extend()
 local boximg
 
-function Lovebox:new(area, x, y)
-    Lovebox.super.new(self, area, x, y)
+function Lovebox:new(area, x, y, water)
+    Lovebox.super.new(self, area, x, y, water)
     self.r = 0
     self.rv = 1.22 * math.pi
     self.v = 0
     self.max_v = 100
     self.a = 100
     self.w = 12
+    self.water = water
 
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - self.w / 2, self.w, self.w)
     body:setObject(self)
