@@ -1,7 +1,8 @@
 BubbleEntity = Entity:extend()
 
 function BubbleEntity:new(area, x, y, water)
-    BubbleEntity.super.new(self, area, x, y, water)
+    BubbleEntity.super.new(self, area, x, y)
+    self.water = water
 
     self.timer:after(
         1,
@@ -20,7 +21,8 @@ function BubbleEntity:new(area, x, y, water)
                 else
                     if (self.collider) then
                         local xv, yv = self.collider:getLinearVelocity()
-                        local direction = Vector.dot(x, y, math.cos(self.r), math.sin(self.r))
+                        local direction =
+                            Vector.dot(x, y, math.cos(self.collider:getAngle()), math.sin(self.collider:getAngle()))
                         if (love.math.random() * math.max(direction, 0) < 0.2 and Vector.len(xv, yv) > 10) then
                             self.area:addEntity(Bubble(self.area, self.x, self.y, xv))
                         end
@@ -35,42 +37,62 @@ end
 function BubbleEntity:update(dt)
     BubbleEntity.super.update(self, dt)
 
+    if (self.speed and false) then
+        self.collider:applyForce(
+            -self.speed * math.cos(self.collider:getAngle()),
+            self.speed / 10 * math.sin(self.collider:getAngle())
+        )
+    end
+
     if (self.water and self.collider) then
-        self.water:splash(self.collider)
+        self.water:splash(self.collider, self.swim)
 
         if (self.y > 1000) then
-            self.collider:applyForce(0, -30000 * dt)
+            self.collider:applyForce(0, -30000)
         end
 
         if (self.x > 2000) then
-            self.collider:applyForce(-30000 * dt, 0)
+            self.collider:applyForce(-30000, 0)
         end
 
         if (self.x < -2000) then
-            self.collider:applyForce(30000 * dt, 0)
+            self.collider:applyForce(30000, 0)
         end
 
         if (not self.collider:getObject().swim) then
             if (self.collider:getAngle() < 0) then
-                self.collider:applyTorque(self.collider:getMass() * 1000000 * dt)
+                self.collider:applyTorque(self.collider:getMass() * 100)
             else
-                self.collider:applyTorque(-self.collider:getMass() * 1000000 * dt)
+                self.collider:applyTorque(-self.collider:getMass() * 100)
             end
+        end
+    end
+
+    if self.collider:enter("Sub") then
+        camera:shake(8, 0.7, 30)
+        local collision_data = self.collider:getEnterCollisionData("Sub")
+        local enemy = collision_data.collider:getObject()
+
+        if (enemy.y < self.y and enemy.isSlamming) then
+            self.collider:applyLinearImpulse(0, 800 * collision_data.collider:getMass())
         end
     end
 end
 
 function BubbleEntity:draw()
+    if not DebugMode then
+        return
+    end
     if (self.collider and self.water) then
         love.graphics.print(
             inspect(
                 {
-                    -- mass = self.collider:getMass(),
+                    mass = self.collider:getMass(),
                     -- density = self.collider:getDensity(),
                     -- grav = self.gravity,
                     -- debug = self.debug
-                    x = self.x,
-                    y = self.y
+                    x = math.round(self.x, 0.1),
+                    y = math.round(self.y, 0.1)
                 }
             ),
             self.x,

@@ -12,16 +12,17 @@ inspect = require "libraries/inspect/inspect"
 require "objects/Entity"
 require "objects/BubbleEntity"
 require "objects/Area"
-require "objects/Boat"
-require "objects/Bobby"
-require "objects/Box"
+require "objects/ships/Boat"
+require "objects/ships/Bobby"
+require "objects/ships/Box"
 require "objects/Bubble"
 require "objects/Fish"
-require "objects/Lovebox"
-require "objects/Plane"
-require "objects/Ship"
-require "objects/Submarine"
-require "objects/Tanker"
+require "objects/ships/Lovebox"
+require "objects/ships/Plane"
+require "objects/ships/Ship"
+require "objects/ships/Submarine"
+require "objects/ships/Tanker"
+require "objects/Ground"
 require "objects/Water"
 
 -- ROOMS --
@@ -100,6 +101,9 @@ love.draw = function()
         CurrentRoom:draw()
     end
     camera:draw()
+    if DebugMode then
+        love.graphics.print("Current FPS: " .. tostring(love.timer.getFPS()), 10, 10)
+    end
 end
 
 function resize(s)

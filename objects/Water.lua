@@ -95,14 +95,18 @@ function Water:getImmersion(collider, start, stop)
     return cx, cy, area, fullArea, intersectionVertices, waterPolygon, waterAngle
 end
 
-function Water:immersion(collider)
+function Water:immersion(collider, singlePolygon)
     local xmin, _, xmax, _ = collider:getBoundingBox()
 
-    if (xmax - xmin < 100) then
+    if (singlePolygon or xmax - xmin < 100) then
         local resultAll = {self:getImmersion(collider, xmin, xmax)}
 
         if (resultAll[1] and resultAll[2]) then
             return {resultAll}
+        end
+
+        if (singlePolygon) then
+            return {}
         end
     end
 
@@ -119,7 +123,8 @@ function Water:immersion(collider)
     return immersions
 end
 
-function Water:splash(collider)
+function Water:splash(collider, simpleLift)
+    simpleLift = simpleLift or false
     local xmin, _, xmax, _ = collider:getBoundingBox()
     local nmin = getClosestIndex(xmin, self.maxPoints, #self.points)
     local nmax = getClosestIndex(xmax, self.maxPoints, #self.points)
@@ -128,32 +133,42 @@ function Water:splash(collider)
         return
     end
 
+    if (simpleLift) then
+        local immersions = self:immersion(collider, true) -- simple immersion
+
+        if (#immersions == 1) then
+            local cx = immersions[1][1]
+            local cy = immersions[1][2]
+            local area = immersions[1][3]
+            local fullArea = immersions[1][4]
+            local waterAngle = immersions[1][7]
+            local percentage = area / fullArea
+            lift = -percentage * collider:getMass() * 900
+            if percentage > 0.1 and percentage < 0.9 then
+                collider:applyForce(lift * math.cos(waterAngle), lift * 1.99)
+            elseif percentage > 0.9 then
+                collider:applyForce(0, lift)
+            end
+        end
+        return
+    end
+
     local immersions = self:immersion(collider)
 
-    for immersionNum, val in pairs(immersions) do
+    for _, val in pairs(immersions) do
         local cx = val[1]
         local cy = val[2]
         local area = val[3]
         local fullArea = val[4]
         local waterAngle = val[7]
 
-        --local cx, cy, area, fullArea = self:immersion(collider)
-
         local vx, vy = collider:getLinearVelocity()
 
         local percentage = area / fullArea
-        local obj = collider:getObject()
-        local lift = -percentage * collider:getMass() * 900
-        if obj.swim then
-            lift = -percentage * collider:getMass() * 900
-        else
-            self:applyFriction(collider)
-        end
 
-        if not obj.swim then
-        --print(math.round(lift, 0.1), math.round(percentage, 0.1))
-        -- prettyprint(immersionNum, lift, percentage, collider:getMass() * 900)
-        end
+        local lift = -percentage * collider:getMass() * 900
+
+        self:applyFriction(collider)
 
         local mass = collider:getMass()
 
@@ -172,21 +187,6 @@ function Water:splash(collider)
         )
 
         if percentage > 0.1 and percentage < 0.9 then
-            -- for n = nmin, nmax do
-            --     print("splashing", n)
-            --     self.points[n].y = math.min(20, math.max(self.points[n].y + force, -20))
-            -- end
-            --print("splash", nmin, nmax, force)
-            -- print(
-            --     math.round(percentage, 0.1),
-            --     math.round(vx, 0.1),
-            --     math.round(vy, 0.1),
-            --     math.round(mass, 0.1),
-            --     math.round(area, 0.1),
-            --     math.round(force, 0.1),
-            --     nmax - nmin + 1
-            -- )
-            -- if on/through surface let it slide down
             collider:applyForce(lift * math.cos(waterAngle), lift * 1.99, cx, cy)
         elseif percentage > 0.9 then
             collider:applyForce(0, lift, cx, cy)
@@ -230,7 +230,7 @@ function Water:update(dt)
                 forceFromRight = dy * SPRING_FORCE
             end
 
-            local dy = self.y - p.y + math.sin(n / 5 * love.math.random()) * 50 * love.math.random()
+            local dy = self.y - p.y -- + math.sin(love.timer.getTime() / 2 + n / 5) * 100
 
             local forceToBaseLine = dy * BASELINE_FORCE
 
@@ -249,56 +249,7 @@ function Water:draw()
     for n, point in ipairs(self.points) do
         if (n > 1) then
             local lastPoint = self.points[n - 1]
-
             love.graphics.line(point.x, point.y, lastPoint.x, lastPoint.y)
         end
     end
-
-    -- love.graphics.setColor(0.3, 0.3, 1, 0.5)
-    -- for v = 1, 1 do
-    --     local a = self:getHeight(100 * v)
-    --     local b = self:getHeight(100 + 100 * v)
-
-    --     if (a and b) then
-    --         local vertices = {
-    --             100 * v,
-    --             a,
-    --             100 + 100 * v,
-    --             b,
-    --             100 + 100 * v,
-    --             1000,
-    --             100 * v,
-    --             1000
-    --         }
-
-    --         love.graphics.polygon("fill", vertices)
-
-    --         local vertices2 = {
-    --             100 * v,
-    --             -200,
-    --             100 + 100 * v,
-    --             -200,
-    --             100 + 100 * v,
-    --             0,
-    --             100 * v,
-    --             0
-    --         }
-    --         love.graphics.setColor(0.3, 1, 0.3, 0.5)
-    --         love.graphics.polygon("fill", vertices2)
-
-    --         local displayed = clip(vertices, vertices2)
-    --         love.graphics.setColor(1, 0.3, 0.3, 0.5)
-
-    --         if (type(displayed) == "table" and #displayed >= 6) then
-    --             love.graphics.polygon("fill", displayed)
-
-    --             love.graphics.setColor(1, 0.3, 1, 0.7)
-    --             local cx, cy = mlib.polygon.getCentroid(displayed)
-    --             local area = mlib.polygon.getArea(displayed)
-
-    --             love.graphics.print("" .. area, cx, cy)
-    --         end
-    --     end
-    -- end
-    -- love.graphics.setColor(1, 1, 1, 1)
 end

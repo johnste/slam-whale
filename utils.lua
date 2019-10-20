@@ -83,3 +83,11 @@ function prettyprint(...)
     end
     print(unpack(output))
 end
+
+function fif(condition, trueValue, falseValue)
+    if condition then
+        return trueValue
+    else
+        return falseValue
+    end
+end

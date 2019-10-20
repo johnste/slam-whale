@@ -1,4 +1,3 @@
-print "korv"
 Entity = Object:extend()
 
 function Entity:new(area, x, y)
