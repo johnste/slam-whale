@@ -80,12 +80,12 @@ function map(func, array)
 end
 
 function double(p, i)
-    local isY = i % 2
-    print(p, i, isY)
-    if isY == 0 then
-        return p * 40
+    local isX = i % 2
+
+    if isX == 1 then
+        return p * 4400 / 35 - 2200
     else
-        return p * 4000 / 35 - 2000
+        return p * 60
     end
 end
 
