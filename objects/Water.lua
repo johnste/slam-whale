@@ -123,7 +123,7 @@ function Water:immersion(collider, singlePolygon)
     return immersions
 end
 
-function Water:splash(collider, simpleLift)
+function Water:splash(dt, collider, simpleLift)
     simpleLift = simpleLift or false
     local xmin, _, xmax, _ = collider:getBoundingBox()
     local nmin = getClosestIndex(xmin, self.maxPoints, #self.points)
@@ -132,6 +132,9 @@ function Water:splash(collider, simpleLift)
     if not nmin or not nmax then
         return
     end
+
+    local obj = collider:getObject()
+    local objLift = obj.waterContained * 0.6
 
     if (simpleLift) then
         local immersions = self:immersion(collider, true) -- simple immersion
@@ -145,51 +148,58 @@ function Water:splash(collider, simpleLift)
             local percentage = area / fullArea
             lift = -percentage * collider:getMass() * 900
             if percentage > 0.1 and percentage < 0.9 then
-                collider:applyForce(lift * math.cos(waterAngle), lift * 1.99)
+                collider:applyForce(lift * math.cos(waterAngle), lift * 1.99 * (1 - objLift))
             elseif percentage > 0.9 then
                 collider:applyForce(0, lift)
             end
         end
-        return
-    end
+    else
+        local immersions = self:immersion(collider)
 
-    local immersions = self:immersion(collider)
+        local percentageSum = 0
+        for _, val in pairs(immersions) do
+            local cx = val[1]
+            local cy = val[2]
+            local area = val[3]
+            local fullArea = val[4]
+            local waterAngle = val[7]
 
-    for _, val in pairs(immersions) do
-        local cx = val[1]
-        local cy = val[2]
-        local area = val[3]
-        local fullArea = val[4]
-        local waterAngle = val[7]
+            local vx, vy = collider:getLinearVelocity()
 
-        local vx, vy = collider:getLinearVelocity()
+            local percentage = area / fullArea
+            percentageSum = percentageSum + percentage
+            local lift = -percentage * collider:getMass() * 900
 
-        local percentage = area / fullArea
+            self:applyFriction(collider)
 
-        local lift = -percentage * collider:getMass() * 900
+            local mass = collider:getMass()
 
-        self:applyFriction(collider)
-
-        local mass = collider:getMass()
-
-        local force =
-            math.sqrt(
-            math.min(
-                10,
-                math.max(
-                    -10,
-                    ((-math.sqrt(math.sqrt(math.abs(vx))) + math.sqrt(math.abs(vy))) * (mass or 1) / (nmax - nmin + 1) /
-                        1 *
-                        area) /
-                        200
+            local force =
+                math.sqrt(
+                math.min(
+                    10,
+                    math.max(
+                        -10,
+                        ((-math.sqrt(math.sqrt(math.abs(vx))) + math.sqrt(math.abs(vy))) * (mass or 1) /
+                            (nmax - nmin + 1) /
+                            1 *
+                            area) /
+                            200
+                    )
                 )
             )
-        )
 
-        if percentage > 0.1 and percentage < 0.9 then
-            collider:applyForce(lift * math.cos(waterAngle), lift * 1.99, cx, cy)
-        elseif percentage > 0.9 then
-            collider:applyForce(0, lift, cx, cy)
+            if percentage > 0.1 and percentage < 0.9 then
+                collider:applyForce(lift * math.cos(waterAngle), lift * 1.99 * (1 - objLift), cx, cy)
+            elseif percentage > 0.9 then
+                collider:applyForce(0, lift * 1.99 * (1 - objLift), cx, cy)
+            end
+        end
+
+        if (percentageSum > 0.9) then
+            if (obj and obj.leak) then
+                obj:leak(dt, percentageSum)
+            end
         end
     end
 end
@@ -230,7 +240,7 @@ function Water:update(dt)
                 forceFromRight = dy * SPRING_FORCE
             end
 
-            local dy = self.y - p.y -- + math.sin(love.timer.getTime() / 2 + n / 5) * 100
+            local dy = self.y - p.y + math.sin(love.timer.getTime() / 4 + n / 5) * 10
 
             local forceToBaseLine = dy * BASELINE_FORCE
 

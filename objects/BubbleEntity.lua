@@ -3,6 +3,7 @@ BubbleEntity = Entity:extend()
 function BubbleEntity:new(area, x, y, water)
     BubbleEntity.super.new(self, area, x, y)
     self.water = water
+    self.waterContained = 0
 
     self.timer:after(
         1,
@@ -29,7 +30,7 @@ function BubbleEntity:new(area, x, y, water)
                     end
                 end
             end
-            self.timer:after(0.1, f)
+            self.timer:after(math.max(0.1 * (1 - self.waterContained)), f)
         end
     )
 end
@@ -37,7 +38,7 @@ end
 function BubbleEntity:update(dt)
     BubbleEntity.super.update(self, dt)
 
-    if (self.speed and false) then
+    if (self.speed) then
         self.collider:applyForce(
             -self.speed * math.cos(self.collider:getAngle()),
             self.speed / 10 * math.sin(self.collider:getAngle())
@@ -45,11 +46,7 @@ function BubbleEntity:update(dt)
     end
 
     if (self.water and self.collider) then
-        self.water:splash(self.collider, self.swim)
-
-        if (self.y > 1000) then
-            self.collider:applyForce(0, -30000)
-        end
+        self.water:splash(dt, self.collider, self.swim)
 
         if (self.x > 2000) then
             self.collider:applyForce(-30000, 0)
@@ -73,16 +70,23 @@ function BubbleEntity:update(dt)
         local collision_data = self.collider:getEnterCollisionData("Sub")
         local enemy = collision_data.collider:getObject()
 
-        if (enemy.y < self.y and enemy.isSlamming) then
+        if (enemy.isSlamming) then
             self.collider:applyLinearImpulse(0, 800 * collision_data.collider:getMass())
         end
     end
+end
+
+function BubbleEntity:leak(dt, percentage)
+    self.waterContained = math.min(1, self.waterContained + dt * percentage * 0.5)
 end
 
 function BubbleEntity:draw()
     if not DebugMode then
         return
     end
+
+    print("idk")
+
     if (self.collider and self.water) then
         love.graphics.print(
             inspect(
@@ -92,7 +96,8 @@ function BubbleEntity:draw()
                     -- grav = self.gravity,
                     -- debug = self.debug
                     x = math.round(self.x, 0.1),
-                    y = math.round(self.y, 0.1)
+                    y = math.round(self.y, 0.1),
+                    water = math.round(self.waterContained * 100, 0.1)
                 }
             ),
             self.x,
@@ -130,7 +135,7 @@ function BubbleEntity:draw()
             love.graphics.polygon("fill", waterPolygon)
             love.graphics.setColor(1, 0.5, 1, 1)
             love.graphics.rectangle("line", cx - math.sqrt(area) / 2, cy + 200, math.sqrt(fullArea), 20)
-            love.graphics.print(math.round(area / fullArea, 0.1), cx, cy + 200)
+            --love.graphics.print(math.round(area / fullArea, 0.1), cx, cy + 200)
             love.graphics.line(cx, cy, cx - force * math.cos(waterAngle), cy - force * math.sin(waterAngle))
             love.graphics.circle("fill", cx - force * math.cos(waterAngle), cy - force * math.sin(waterAngle), 5)
 

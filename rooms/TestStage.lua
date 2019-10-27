@@ -108,7 +108,6 @@ function TestStage:draw()
     love.graphics.setLineWidth(3)
     love.graphics.line(-2000, -100, -2000, 1000)
     love.graphics.line(2000, -100, 2000, 1000)
-    love.graphics.line(-2000, 1000, 2000, 1000)
 
     love.graphics.pop()
 

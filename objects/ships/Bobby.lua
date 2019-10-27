@@ -3,7 +3,7 @@ local boximg = love.graphics.newImage("img/bobby.png")
 
 function Bobby:new(area, x, y, water)
     Bobby.super.new(self, area, x, y, water)
-    self.w = 24
+    self.w = 12
 
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - self.w / 2, self.w, self.w)
     body:setObject(self)
