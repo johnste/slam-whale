@@ -8,13 +8,13 @@ function TestStage:new()
 
     self.water = self.area:addEntity(Water(self.area, 0, 0))
     self.ground = self.area:addEntity(Ground(self.area, 0, 0))
-    self.player = self.area:addEntity(Submarine(self.area, 0, 200, self.water))
+    self.player = self.area:addEntity(Submarine(self.area, 50, 200, self.water))
 
-    self.area:addEntity(Bobby(self.area, self.player.x + 200, 0, self.water))
-    self.area:addEntity(Boat(self.area, self.player.x + 400, 0, self.water))
-    self.area:addEntity(Ship(self.area, self.player.x + 600, 0, self.water))
-    self.area:addEntity(Tanker(self.area, self.player.x + 800, 0, self.water))
-    self.area:addEntity(Plane(self.area, self.player.x + 1000, 0, self.water))
+    -- self.area:addEntity(Bobby(self.area, self.player.x + 200, 0, self.water))
+    -- self.area:addEntity(Boat(self.area, self.player.x + 400, 0, self.water))
+    -- self.area:addEntity(Ship(self.area, self.player.x + 600, 0, self.water))
+    -- self.area:addEntity(Tanker(self.area, self.player.x + 800, 0, self.water))
+    -- self.area:addEntity(Plane(self.area, self.player.x + 1000, 0, self.water))
 
     input:bind(
         "5",
@@ -86,7 +86,11 @@ function TestStage:new()
 end
 
 function TestStage:update(dt)
-    local slow = math.max(0.2, 1 - self.player.slamCharge / 3 * 2)
+    if (self.paused) then
+        return
+    end
+
+    local slow = 1 --math.max(0.5, 1 - self.player.slamCharge / 3 * 2)
     self.area:update(dt * slow)
     self.timer:update(dt * slow)
 end
@@ -106,8 +110,8 @@ function TestStage:draw()
 
     love.graphics.push("all")
     love.graphics.setLineWidth(3)
-    love.graphics.line(-2000, -100, -2000, 1000)
-    love.graphics.line(2000, -100, 2000, 1000)
+    love.graphics.line(0, -100, 0, 1000)
+    love.graphics.line(4000, -100, 4000, 1000)
 
     love.graphics.pop()
 

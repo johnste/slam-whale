@@ -10,7 +10,7 @@ function Ship:new(area, x, y, water)
     local body = self.area.world:newRectangleCollider(self.x - self.w / 2, self.y - 12, self.w, 24)
     body:setObject(self)
     body:setMass(20)
-    body:setAngularDamping(1)
+    body:setAngularDamping(3)
     body:setLinearDamping(0.04)
     body:setLinearVelocity(-25, 0)
 

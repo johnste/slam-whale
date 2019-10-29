@@ -1,14 +1,11 @@
 Water = Entity:extend()
 
-local CX
-local CY
-
 local function getPosition(n, max)
-    return n / max * 4000 - 2000
+    return n / max * 4000
 end
 
 local function getFromPosition(x, max, numPoints)
-    local n = ((x + 2000) / 4000) * max
+    local n = ((x) / 4000) * max
 
     if (n >= 1 and n < numPoints) then
         return n
@@ -35,7 +32,7 @@ function Water:new(area, x, y)
 
     for n = 1, self.maxPoints do
         self.points[n] = {
-            x = getPosition(n, self.maxPoints),
+            x = getPosition(n - 1, self.maxPoints),
             y = self.y + 0,
             speed = {y = 0},
             mass = 1
@@ -129,33 +126,46 @@ function Water:splash(dt, collider, simpleLift)
     local nmin = getClosestIndex(xmin, self.maxPoints, #self.points)
     local nmax = getClosestIndex(xmax, self.maxPoints, #self.points)
 
-    if not nmin or not nmax then
-        return
-    end
-
     local obj = collider:getObject()
     local objLift = obj.waterContained * 0.6
 
     if (simpleLift) then
         local immersions = self:immersion(collider, true) -- simple immersion
+        local vx, vy = collider:getLinearVelocity()
+        if (#immersions == 0) then
+            return
+        end
 
-        if (#immersions == 1) then
-            local cx = immersions[1][1]
-            local cy = immersions[1][2]
-            local area = immersions[1][3]
-            local fullArea = immersions[1][4]
-            local waterAngle = immersions[1][7]
-            local percentage = area / fullArea
-            lift = -percentage * collider:getMass() * 900
+        local cx = immersions[1][1]
+        local cy = immersions[1][2]
+        local area = immersions[1][3]
+        local fullArea = immersions[1][4]
+        local waterAngle = immersions[1][7]
+        local percentage = area / fullArea
+        lift = -percentage * collider:getMass() * 900
+
+        if nmin and nmax then
             if percentage > 0.1 and percentage < 0.9 then
-                collider:applyForce(lift * math.cos(waterAngle), lift * 1.99 * (1 - objLift))
-            elseif percentage > 0.9 then
-                collider:applyForce(0, lift)
+                local mass = collider:getMass()
+                local force = math.sign(vy) * (math.sqrt(mass * percentage * (math.abs(vy)) / (nmax - nmin + 1))) * 0.5
+
+                for n = nmin, nmax do
+                    self.points[n].y = self.points[n].y + force
+                end
             end
+        end
+
+        if percentage > 0.1 and percentage < 0.9 then
+            -- for n = nmin, nmax do
+            --     self.points[n].y = self.points[n].y + force
+            -- end
+            collider:applyForce(lift * math.cos(waterAngle), lift * (2 - 1 * percentage) * (1 - objLift))
+        elseif percentage > 0.9 then
+            collider:applyForce(0, lift)
         end
     else
         local immersions = self:immersion(collider)
-
+        local vx, vy = collider:getLinearVelocity()
         local percentageSum = 0
         for _, val in pairs(immersions) do
             local cx = val[1]
@@ -164,33 +174,14 @@ function Water:splash(dt, collider, simpleLift)
             local fullArea = val[4]
             local waterAngle = val[7]
 
-            local vx, vy = collider:getLinearVelocity()
-
             local percentage = area / fullArea
             percentageSum = percentageSum + percentage
             local lift = -percentage * collider:getMass() * 900
 
             self:applyFriction(collider)
 
-            local mass = collider:getMass()
-
-            local force =
-                math.sqrt(
-                math.min(
-                    10,
-                    math.max(
-                        -10,
-                        ((-math.sqrt(math.sqrt(math.abs(vx))) + math.sqrt(math.abs(vy))) * (mass or 1) /
-                            (nmax - nmin + 1) /
-                            1 *
-                            area) /
-                            200
-                    )
-                )
-            )
-
             if percentage > 0.1 and percentage < 0.9 then
-                collider:applyForce(lift * math.cos(waterAngle), lift * 1.99 * (1 - objLift), cx, cy)
+                collider:applyForce(lift * math.cos(waterAngle), lift * 1.89 * (1 - objLift), cx, cy)
             elseif percentage > 0.9 then
                 collider:applyForce(0, lift * 1.99 * (1 - objLift), cx, cy)
             end
@@ -199,6 +190,18 @@ function Water:splash(dt, collider, simpleLift)
         if (percentageSum > 0.9) then
             if (obj and obj.leak) then
                 obj:leak(dt, percentageSum)
+            end
+        end
+
+        if nmin and nmax then
+            if percentageSum > 0.1 and percentageSum < 0.9 then
+                local mass = collider:getMass()
+                local force =
+                    math.sign(vy) * (math.sqrt(mass * percentageSum * (math.abs(vy)) / (nmax - nmin + 1))) * 0.5
+
+                for n = nmin, nmax do
+                    self.points[n].y = self.points[n].y + force
+                end
             end
         end
     end

@@ -69,7 +69,7 @@ function Submarine:update(dt)
     end
 
     if (self.y < waterHeight) and not input:down("turbo") then
-        self.air = math.min(1, self.air + dt / 2)
+        self.air = self.air + dt / 2 --  math.min(1, self.air + dt / 2)
     end
 
     if (self.y < waterHeight) then

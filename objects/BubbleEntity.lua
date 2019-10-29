@@ -30,7 +30,7 @@ function BubbleEntity:new(area, x, y, water)
                     end
                 end
             end
-            self.timer:after(math.max(0.1 * (1 - self.waterContained)), f)
+            self.timer:after(math.max(0.1, 1 - self.waterContained), f)
         end
     )
 end
@@ -48,11 +48,11 @@ function BubbleEntity:update(dt)
     if (self.water and self.collider) then
         self.water:splash(dt, self.collider, self.swim)
 
-        if (self.x > 2000) then
+        if (self.x > 4000) then
             self.collider:applyForce(-30000, 0)
         end
 
-        if (self.x < -2000) then
+        if (self.x < 0) then
             self.collider:applyForce(30000, 0)
         end
 
@@ -84,8 +84,6 @@ function BubbleEntity:draw()
     if not DebugMode then
         return
     end
-
-    print("idk")
 
     if (self.collider and self.water) then
         love.graphics.print(
